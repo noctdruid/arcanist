@@ -88,5 +88,15 @@ class InfoLog(MainLogConfig):
 
         self.logger.info(pe % REPL)
 
-    def log_other(self):
-        pass
+    def log_rename(self, filled_pattern):
+        """ single-input blueprint:
+        CMD: rename
+        GROUP: old name -> new name """
+
+        # log generating pattern
+        pe = (f'\n{sy[5] * 33}' +
+              f'\n{sy[4]} CMD: %s' +
+              f'\n{sy[4]} GROUP: %s' +
+              f'\n{sy[5] * 33}\n')
+
+        self.logger.info(pe % filled_pattern)

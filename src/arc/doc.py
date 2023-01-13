@@ -38,15 +38,24 @@ class Man:
     arc-tasks -s <group_id> <task_id> <task_id> ...
     arc-tasks -f <group_id> <task_id> <task_id> ...
 
-    special-operation arg example:
+    other examples:
     arc-tasks --expand <group_id> <task_id>
     """
 
 
 class Notifications:
-    kw = {
-        'x': 'x',
+    """ Post command-execution notifications """
+    dictkw = {
+        'create': 'new group: %s\nnew task: %s',  # 2
+        'task': 'task: %s\nassigned to the group: %s',  # 2
+        'group': 'changed name of the group:\n%s __-->__ %s',  # 2
+        'edit': 'changed task from the group: %s\n%s __-->__ %s',  # 3
+        'remove': 'removed task: %s\nfrom the group: %s',  # 2
+        'archive': 'whole group archived: %s',  # 1
+        'purge': 'whole group deleted: %s',  # 1
     }
 
     def notify(self, *args) -> str:
-        pass
+        notification = self.dictkw[args[0]]
+        arg_inputs = tuple([x for x in args[1:]])
+        return (notification % arg_inputs)

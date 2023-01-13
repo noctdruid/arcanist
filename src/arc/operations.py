@@ -108,8 +108,11 @@ class Operations:
 
             # InfoLog
             InfoLog().log_entry(
-                ('create', group_name, task_name)
+                ('create group and task', group_name, task_name)
             )
+
+            # Notification
+            print(Notifications().notify('create', group_name, task_name))
 
         def task(self):
             group_id_key = self.kwargs['group_id_key'] - 1
@@ -123,13 +126,25 @@ class Operations:
             # InfoLog
             group_name = self.json_obj['all'][group_id_key]['name']
             InfoLog().log_entry(
-                ('create', group_name, task_name)
+                ('add task', group_name, task_name)
             )
+
+            # Notification
+            print(Notifications().notify('task', task_name, group_name))
 
         def group(self):
             group_id_key = self.kwargs['group_id_key'] - 1
             group_name = self.kwargs['group_name']
+            old_name = self.json_obj['all'][group_id_key]['name']
             JsonInteraction().change_group_name(group_id_key, group_name)
+
+            # InfoLog
+            InfoLog().log_rename(
+                ('rename group', f'{old_name} __-->__ {group_name}')
+            )
+
+            # Notification
+            print(Notifications().notify('group', old_name, group_name))
 
         def edit(self):
             group_id_key = self.kwargs['group_id_key'] - 1
@@ -143,7 +158,14 @@ class Operations:
             # InfoLog
             group_name = self.json_obj['all'][group_id_key]['name']
             InfoLog().log_entry(
-                ('edit', group_name, f'{old_name} __-->__ {task_name}')
+                ('edit task description',
+                 group_name, f'{old_name} __-->__ {task_name}')
+            )
+
+            # Notification
+            print(Notifications().notify(
+                'edit', group_name, old_name, task_name
+                )
             )
 
         def remove(self):
@@ -163,15 +185,21 @@ class Operations:
             # InfoLog
             group_name = self.json_obj['all'][group_id_key]['name']
             InfoLog().log_entry(
-                ('remove', group_name, task_name)
+                ('remove task', group_name, task_name)
             )
+
+            # Notification
+            print(Notifications().notify('remove', task_name, group_name))
 
         def archive(self):
             pass  # queue
 
+            # Notification
+            print(Notifications().notify('archive', ''))
+
         def purge(self, group_id_key):
             group = JsonInteraction().purge_group(group_id_key - 1)
-            cmd = 'purge'
+            cmd = 'purge group'
             group_name = group['name']
             tasks = group['tasks']
 
@@ -183,6 +211,9 @@ class Operations:
                 (cmd, group_name),
                 list_of_tasks
             ))
+
+            # Notification
+            print(Notifications().notify('purge', group_name))
 
     class MultiOperations:
         """ This class is for start/finish options,
