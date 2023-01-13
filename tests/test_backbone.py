@@ -25,6 +25,7 @@ class JsonTestCase(unittest.TestCase):
     def test_create_group_task(self):
         # test: making group, making task, assigning id_key
         json_obj = {'all': []}
+        JsonInteraction().json_dump(json_obj)
         get_id = JsonInteraction().index_assign(json_obj['all'])
         group_pattern = {
             'id': get_id,
@@ -50,6 +51,7 @@ class JsonTestCase(unittest.TestCase):
     def test_other_functions(self):
         # test: enum_index(), change_group_name(), expand_task_description()
         json_obj = {'all': []}
+        JsonInteraction().json_dump(json_obj)
         get_id = JsonInteraction().index_assign(json_obj['all'])
         group_pattern = {
             'id': get_id,
@@ -58,13 +60,14 @@ class JsonTestCase(unittest.TestCase):
         }
         json_obj['all'].append(group_pattern)
         JsonInteraction().json_dump(json_obj)
-        JsonInteraction().change_group_name(1, 'NewGroupName')
+        JsonInteraction().change_group_name(0, 'NewGroupName')
         is_name_right = JsonInteraction().json_load()
         self.assertEqual(is_name_right['all'][0]['name'], 'NewGroupName')
 
     def test_group_json_io(self):
         # test group input
         json_obj = {'all': []}
+        JsonInteraction().json_dump(json_obj)
         group_pattern = {
             'id': 1,
             'name': 'MyGroup',

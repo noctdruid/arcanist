@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.append(os.path.abspath('../../src/arc/'))
+sys.path.append(os.path.abspath('../src/arc/'))
 
 from log import DebugLog, InfoLog
 
@@ -24,6 +24,10 @@ class LogTest:
         InfoLog().log_entries((
             ('archive', 'zen of python'),
             ('task1', 'task2', 'task3')
+        ))
+
+        InfoLog().log_rename((
+            ('rename group', 'Old Group Name __-->__ New Group Name')
         ))
 
 
