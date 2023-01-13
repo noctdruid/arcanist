@@ -11,7 +11,11 @@ DIR_PATH = os.path.join(PATH, '.arc-tasks')
 now = datetime.now().strftime("%d-%b-%Y").upper()
 
 
-# resolve possible corruptions of storing directory
+# resolve possible system/directory corruptions
+class Init:
+    pass
+
+
 def dir_check():
     dir_exist = os.path.isdir(DIR_PATH)
 
@@ -20,7 +24,7 @@ def dir_check():
         if directory_permission:
             return True
         else:
-            print('check if directory has rwx permissions: ~/.clt')
+            print('check if directory has rwx permissions: ~/.arc-tasks')
             sys.exit(1)
 
     elif not dir_exist:
@@ -41,7 +45,7 @@ class ShellFormatting:
 
     def __init__(self):
         self.SHELL_PADS = 8  # left-right shell padding
-        self.MIN_SHELL_ALLOWED = 72  # req: minimal user-shell width
+        self.MIN_SHELL_ALLOWED = 72  # req: minimal columns width 72
 
     def shell_allowed(self):
         if self.MIN_SHELL_ALLOWED <= self.user_shell_width:

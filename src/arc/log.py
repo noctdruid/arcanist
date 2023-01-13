@@ -3,7 +3,7 @@ DEBUG FILE LOCATION: /home/$USER/.arc-tasks/debug.log
 INFO FILE LOCATION: /home/$USER/.arc-tasks/store.log
 FORMAT: 2023-01-05__10:10:19__PM:LEVEL: message
 LEVEL DEBUG: exceptions
-LEVEL INFO: user-entries """
+LEVEL INFO: user-entries, user-commands """
 
 import os
 import logging
@@ -51,7 +51,7 @@ class InfoLog(MainLogConfig):
 
     def log_entry(self, filled_pattern):
         """ single-input blueprint:
-        CMD: create/delete/archive
+        CMD: create/add/edit/remove
         GROUP: group name
         TASK: task description"""
 
@@ -66,16 +66,16 @@ class InfoLog(MainLogConfig):
 
     def log_entries(self, filled_pattern):
         """ multi-input blueprint:
-        CMD: delete/archive
-        GROUP(S): group1, group2...
+        CMD: archive/purge
+        GROUP: group
         TASKS LIST:
         n1,
         n2,
         n3..."""
 
-        REPL = (filled_pattern[0], filled_pattern[1])
+        REPL = (filled_pattern[0][0], filled_pattern[0][1])
 
-        def gen_multi_str(i=filled_pattern[2]):
+        def gen_multi_str(i=filled_pattern[1]):
             # return row by row list of tasks
             return '\n    '.join(i)
 
@@ -87,3 +87,6 @@ class InfoLog(MainLogConfig):
               f'\n{sy[5] * 33}\n')
 
         self.logger.info(pe % REPL)
+
+    def log_other(self):
+        pass

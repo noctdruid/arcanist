@@ -33,12 +33,8 @@ class JsonInteraction:
 
         except json.decoder.JSONDecodeError:
             print("error: json decoder, trying to resolve... exec cmd again")
-            self.json_dump(self.json_object)
-            sys.exit(1)
-
-        else:
-            print("error: json file isn't available for read")
             DebugLog().log_exception()
+            self.json_dump(self.json_object)
             sys.exit(1)
 
     def json_dump(self, json_dict, json_file=json_path):
@@ -56,17 +52,14 @@ class JsonInteraction:
             DebugLog().log_exception()
             sys.exit(1)
 
-        else:
-            print("error: json file isn't available for write")
-            DebugLog().log_exception()
-            sys.exit(1)
-
     def json_reset(self, json_file=json_path):
         # method to remove all user entries in json file
         try:
             confirm = input('Are u sure? y/n: ')
             if confirm.lower() == 'y':
                 self.json_dump(self.json_object)
+                print('all entries are nullified.')
+                print('logs are unchanged.')
             else:
                 print('reset aborted...')
                 sys.exit(0)
@@ -91,7 +84,7 @@ class JsonInteraction:
         if not self.user_entries():
             return 1
         else:
-            highest_id_key = json_list[-1]['id']
+            highest_id_key = json_list[-1]['id_key']
             new_highest_id_key = highest_id_key + 1
             return new_highest_id_key
 
@@ -99,14 +92,14 @@ class JsonInteraction:
         # method for enumerating json indexes
         id_key = 1
         for item in json_list:
-            item.update({'id': id_key})
+            item.update({'id_key': id_key})
             id_key += 1
         return json_list
 
     def change_group_name(self, *args):
         # method for changing group name
         json_entries = self.json_load()
-        group_id_key = args[0] - 1
+        group_id_key = args[0]
         new_group_name = args[1]
 
         group = json_entries['all'][group_id_key]
@@ -122,3 +115,29 @@ class JsonInteraction:
 
         task = json_entries['all'][group_id_key]['tasks'][task_id_key]
         print(task['desc'])
+
+    def purge_group(self, group_id_key):
+        # method for deleting whole group,
+        # enumerating indexes and returning object for log
+        json_entries = self.json_load()
+        try:
+            confirm = input('Are u sure? y/n: ')
+            if confirm.lower() == 'y':
+                pass
+            else:
+                print('purge aborted...')
+                sys.exit(0)
+
+        except KeyboardInterrupt:
+            DebugLog().log_exception()
+            sys.exit(1)
+
+        for_log = json_entries['all'][group_id_key]
+
+        del json_entries['all'][group_id_key]
+
+        if json_entries['all']:
+            self.enum_index(json_entries['all'])
+
+        self.json_dump(json_entries)
+        return for_log
