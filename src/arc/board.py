@@ -51,8 +51,10 @@ class Board:
             symb = self.pending
         elif args[1] == 'inprog':
             symb = self.inprog
-            if task_length_fit < 0:
+            if task_length_fit <= 1:
                 f_desc = f'{self.arrow} {args[4][:task_length_fit - 5]}...'
+            else:
+                f_desc = f'{self.arrow} {args[4]}'
         else:
             symb = self.done
             f_desc = f'{self.c}{f_desc}{self.n}'

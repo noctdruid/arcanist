@@ -306,7 +306,7 @@ class Operations:
         def __init__(self):
             self.json_obj = JsonInteraction().json_load()
 
-        def _board(self):
+        def board(self):
             if JsonInteraction().user_entries():
                 json_obj = self.json_obj['all']
 
@@ -358,11 +358,11 @@ class Operations:
                 id_keys[0] - 1, id_keys[1] - 1
             )
 
-        def _reset(self):
+        def reset(self):
             JsonInteraction().json_reset()
 
-        def _help(self):
+        def help_(self):
             print(Man.HELP)
 
-        def _usage(self):
+        def usage(self):
             print(Man.USAGE)
