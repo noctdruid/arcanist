@@ -1,9 +1,9 @@
 import os
 import sys
-sys.path.append(os.path.abspath('../src/arc/'))
+sys.path.append(os.path.abspath('../src/'))
 
-from operations import Operations
+from arc.operations import Operations
 
 
 if __name__ == '__main__':
-    Operations().special()._board()
+    Operations().special().board()

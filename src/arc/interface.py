@@ -1,15 +1,17 @@
 import argparse
+import os
 import sys
-from log import DebugLog
-from operations import Operations
+from arc.log import DebugLog
+from arc.operations import Operations
+from arc.resolve import InitCheckout
 
 
 class Interface:
-    """ doc """
+    """ Argparse library interface """
     def _init_args(self):
         self.parser = argparse.ArgumentParser(
             prog='arc-tasks',
-            description='Minimalistic command-line task objectives tracking.',
+            description='Minimalistic cli task-objectives tracking.',
             usage='%(prog)s [OPTS]',
             add_help=False
         )
@@ -58,6 +60,9 @@ class Interface:
             type=int, nargs=2
         )
         self.parser.add_argument(
+            '--show', action='store_true', dest='show',
+        )
+        self.parser.add_argument(
             '--reset', action='store_true', dest='reset'
         )
         self.parser.add_argument(
@@ -71,7 +76,7 @@ class Interface:
         return args
 
     def _cli_policy(self):
-        """ doc """
+        """ Method to adjust user-behaviour """
         if sys.argv[0] == sys.argv[-1]:
             return False
 
@@ -89,7 +94,7 @@ class Interface:
                         raise SyntaxError('multiple options input.')
 
         except SyntaxError:
-            print('error: only one option allowed.')
+            print('error: only one option allowed per execution.')
             DebugLog().log_exception()
             sys.exit(1)
 
@@ -97,7 +102,7 @@ class Interface:
         for key, value in args.items():
             if value:
                 pair = (key, value)
-            break
+                break
 
         # for multi-type cases convert numbers to int type
         if pair[0] in MIXED_TYPE:
@@ -116,7 +121,20 @@ class Interface:
         return pair
 
     def initialize_args(self):
-        """ ... """
+        """ method to initialize argparse cli """
+        try:
+            if InitCheckout().dir_check():
+                pass
+            else:
+                raise OSError('directory corruption')
+
+        except OSError:
+            user = os.getenv('USER')
+            print('problem with store directory:')
+            print(f'/home/{user}/.arc-tasks/')
+            DebugLog().log_exception()
+            sys.exit(1)
+
         args = self._cli_policy()
         action_library = {
             'create':
@@ -145,6 +163,7 @@ class Interface:
             'finish': 'Operations().multi().finish(*args[1])',
             'board': 'Operations().special().board()',
             'expand': 'Operations().special().expand(args[1][0], args[1][1])',
+            'show': 'Operations().special().show()',
             'reset': 'Operations().special().reset()',
             'help': 'Operations().special().help_()',
             'usage': 'Operations().special().usage()',

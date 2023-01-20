@@ -16,6 +16,7 @@ class Man:
 
     --board: show tasks board (default)
     --expand: expand task description
+    --show: show archived tasks
     --reset: restart program to no task entries
     --help: show this help message
     --usage: show examples of usage
@@ -33,7 +34,12 @@ class Man:
     arc-tasks -p <group_id>
     arc-tasks -s <group_id> <task_id> <task_id> ...
     arc-tasks -f <group_id> <task_id> <task_id> ...
+    arc-tasks --board
     arc-tasks --expand <group_id> <task_id>
+    arc-tasks --show
+    arc-tasks --reset
+    arc-tasks --help
+    arc-tasks --usage
     """
 
 

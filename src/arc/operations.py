@@ -1,8 +1,8 @@
-from resolve import now
-from jsonpy import JsonInteraction
-from log import InfoLog
-from board import Board
-from doc import Man, Notifications
+from arc.resolve import now
+from arc.jsonpy import JsonInteraction
+from arc.log import InfoLog
+from arc.board import Board
+from arc.doc import Man, Notifications
 
 
 class Group:
@@ -62,26 +62,7 @@ class Task:
 
 
 class Operations:
-    """ types of operations:
-    [SINGLE TASK OPERATIONS]
-    -c, --create: create group & task
-    -t, --task: add task to the group
-    -g, --group: change name of the group
-    -e, --edit: edit task description
-    -r, --remove: remove task
-
-    [MULTI TASK OPERATIONS]
-    -s, --start: change state of task(s) to 'in progress'
-    -f, --finish: change state of task(s) to 'done'
-    -a, --archive: archive whole group date-based
-    -p, --purge: purge whole group
-
-    [SPECIAL OPERATIONS]
-    --board: show tasks board (default)
-    --expand: expand task description
-    --reset: restart program to no task entries
-    --help: show help message
-    --usage: show examples of usage """
+    """ doc """
 
     def __init__(self):
         self.single = self.SingleOperations
@@ -191,11 +172,23 @@ class Operations:
             # Notification
             print(Notifications().notify('remove', task_name, group_name))
 
-        def archive(self):
-            pass  # queue
+        def archive(self, group_id_key):
+            group = JsonInteraction().archive_group(group_id_key - 1)
+            cmd = 'archive group'
+            group_name = group['name']
+            tasks = group['tasks']
+
+            list_of_tasks = []
+            for task in tasks:
+                list_of_tasks.append(task['desc'])
+
+            InfoLog().log_entries((
+                (cmd, group_name),
+                list_of_tasks
+            ))
 
             # Notification
-            print(Notifications().notify('archive', ''))
+            print(Notifications().notify('archive', group_name))
 
         def purge(self, group_id_key):
             group = JsonInteraction().purge_group(group_id_key - 1)
@@ -357,6 +350,9 @@ class Operations:
             JsonInteraction().expand_task_description(
                 id_keys[0] - 1, id_keys[1] - 1
             )
+
+        def show(self):
+            pass
 
         def reset(self):
             JsonInteraction().json_reset()

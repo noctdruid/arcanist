@@ -1,24 +1,34 @@
-from resolve import ShellFormatting
+from arc.resolve import InitCheckout, TerminalFormatting
 
 
 class Board:
     """ Terminal objectives presentation """
     def __init__(self):
-        self.n = '\033[0m'  # ansi normal
-        self.u = '\033[4m'  # ansi underline
-        self.i = '\033[7m'  # ansi inverted
-        self.c = '\033[9m'  # ansi crossed
+        """ doc """
+        checkout = InitCheckout().term_initialize()
+
+        if checkout == '__ansi__':
+            self.n = '\033[0m'  # ansi normal
+            self.u = '\033[4m'  # ansi underline
+            self.i = '\033[7m'  # ansi inverted
+            self.c = '\033[9m'  # ansi crossed
+        else:
+            self.n = ''
+            self.u = ''
+            self.i = ''
+            self.c = ''
+
         self.s = ' '  # space
         self.t = '    '  # tab
 
-        self.sq = ShellFormatting.SYMBOL[6]
-        self.user_shell = ShellFormatting.user_shell_width
-        self.generic = ShellFormatting.MIN_GEN_CHARS
+        self.sq = TerminalFormatting.SYMBOL[6]
+        self.user_shell = TerminalFormatting.user_shell_width
+        self.generic = TerminalFormatting.MIN_GEN_CHARS
 
-        self.pending = ShellFormatting.SYMBOL[0]
-        self.inprog = ShellFormatting.SYMBOL[1]
-        self.arrow = ShellFormatting.SYMBOL[2]
-        self.done = ShellFormatting.SYMBOL[3]
+        self.pending = TerminalFormatting.SYMBOL[0]
+        self.inprog = TerminalFormatting.SYMBOL[1]
+        self.arrow = TerminalFormatting.SYMBOL[2]
+        self.done = TerminalFormatting.SYMBOL[3]
 
     def group_formatting(self, id_key, name, done, total):
         # group id_key, group name, minimal statistic [DONE/TOTAL]
@@ -36,10 +46,10 @@ class Board:
 
     def task_formatting(self, *args):
         # formatting: task key_id
-        f_id = ShellFormatting().add_space(args[0])
+        f_id = TerminalFormatting().add_space(args[0])
 
         # formatting: task description
-        task_length_fit = ShellFormatting().measure_task_desc(args[4])
+        task_length_fit = TerminalFormatting().measure_task_desc(args[4])
         if task_length_fit < 0:
             # dots_added = max_length - 3
             f_desc = f'{args[4][:task_length_fit - 3]}...'

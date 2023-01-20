@@ -1,10 +1,10 @@
 import os
 import sys
 import unittest
-sys.path.append(os.path.abspath('../src/arc/'))
+sys.path.append(os.path.abspath('../src/'))
 
-from jsonpy import JsonInteraction
-from resolve import ShellFormatting
+from arc.jsonpy import JsonInteraction
+from arc.resolve import TerminalFormatting
 
 
 class JsonTestCase(unittest.TestCase):
@@ -82,25 +82,25 @@ class JsonTestCase(unittest.TestCase):
 class ResolveTestCase(unittest.TestCase):
     def test_shell_allowed_one(self):
         # test if shell is allowed
-        shell_instance = ShellFormatting()
+        shell_instance = TerminalFormatting()
         shell_instance.user_shell_width = 72
         self.assertTrue(shell_instance.shell_allowed())
 
     def test_shell_allowed_two(self):
         # test if shell is allowed
-        shell_instance = ShellFormatting()
+        shell_instance = TerminalFormatting()
         shell_instance.user_shell_width = 70
         self.assertFalse(shell_instance.shell_allowed())
 
     def test_add_space(self):
         # test id_key formatting
-        result = ShellFormatting().add_space(5)
+        result = TerminalFormatting().add_space(5)
         self.assertEqual(result, ' 5')
 
     def test_measure_task_desc(self):
         # test string formatting
         my_str = 'this is new task description'
-        shell_instance = ShellFormatting()
+        shell_instance = TerminalFormatting()
         shell_instance.user_shell_width = 80
         result = shell_instance.measure_task_desc(my_str)
         second_result = 35 - len(my_str)

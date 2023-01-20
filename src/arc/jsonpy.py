@@ -3,38 +3,52 @@ import sys
 import json
 from resolve import DIR_PATH
 from log import DebugLog
+from archive import Archive
 
 
 class JsonInteraction:
     """ Class as a driver between program operations and json i/o """
     json_path = os.path.join(DIR_PATH, 'store.json')
+    archive_path = os.path.join(DIR_PATH, 'archive.json')
     json_object = {'all': []}  # main json object for storing groups array
 
-    def json_load(self, json_file=json_path):
-        # json decode to dict
+    def _json_decode_resolve(self, path) -> bool:
         try:
-            opened_file = open(json_file, 'r')
+            opened_file = open(path, 'r')
             json_dict = json.load(opened_file)
-            opened_file.close()
-            return json_dict
+            if isinstance(json_dict['all'], list):
+                opened_file.close()
+                return True
+            else:
+                raise KeyError("main object is not 'all'")
+
+        except KeyError:
+            DebugLog().log_exception()
+            self.json_dump(self.json_object)
+            return True
+
+        except json.decoder.JSONDecodeError:
+            DebugLog().log_exception()
+            self.json_dump(self.json_object, json_file=path)
+            return True
+
+    def json_load(self, json_file=json_path):
+        # decode json to dict
+        is_true = self._json_decode_resolve(json_file)
+        try:
+            if is_true:
+                opened_file = open(json_file, 'r')
+                json_dict = json.load(opened_file)
+                opened_file.close()
+                return json_dict
 
         except FileNotFoundError:
-            print("error: file not found, check ~/.arc-tasks/debug.log")
             DebugLog().log_exception()
             sys.exit(1)
 
         except PermissionError:
-            print(
-                "error: file doesn't have right permissions, " +
-                "check ~/.arc-tasks/debug.log"
-            )
+            print("error: file doesn't have right permissions")
             DebugLog().log_exception()
-            sys.exit(1)
-
-        except json.decoder.JSONDecodeError:
-            print("error: json decoder, trying to resolve... exec cmd again")
-            DebugLog().log_exception()
-            self.json_dump(self.json_object)
             sys.exit(1)
 
     def json_dump(self, json_dict, json_file=json_path):
@@ -44,11 +58,12 @@ class JsonInteraction:
             json.dump(json_dict, opened_file, indent=4)
             opened_file.close()
 
+        except FileNotFoundError:
+            DebugLog().log_exception()
+            sys.exit(1)
+
         except PermissionError:
-            print(
-                "error: file doesn't have right permissions, " +
-                "check ~/.arc-tasks/debug.log"
-            )
+            print("error: file doesn't have right permissions")
             DebugLog().log_exception()
             sys.exit(1)
 
@@ -116,9 +131,37 @@ class JsonInteraction:
         task = json_entries['all'][group_id_key]['tasks'][task_id_key]
         print(task['desc'])
 
+    def archive_group(self, group_id_key):
+        # method for archiving whole group,
+        # deleting group and calling enum_index and returning object for log
+        json_entries = self.json_load()
+        archive_entries = self.json_load(json_file=self.archive_path)
+        try:
+            confirm = input('Are u sure? y/n: ')
+            if confirm.lower() == 'y':
+                pass
+            else:
+                print('archiving aborted...')
+                sys.exit(0)
+
+        except KeyboardInterrupt:
+            DebugLog().log_exception()
+            sys.exit(1)
+
+        for_log = json_entries['all'][group_id_key]
+        out = Archive().transform(for_log)
+
+        archive_entries['all'].append(out)
+
+        del json_entries['all'][group_id_key]
+        self.enum_index(json_entries['all'])
+        self.json_dump(archive_entries, json_file=self.archive_path)
+        self.json_dump(json_entries)
+        return for_log
+
     def purge_group(self, group_id_key):
         # method for deleting whole group,
-        # enumerating indexes and returning object for log
+        # calling enum_index and returning object for log
         json_entries = self.json_load()
         try:
             confirm = input('Are u sure? y/n: ')
@@ -135,9 +178,9 @@ class JsonInteraction:
         for_log = json_entries['all'][group_id_key]
 
         del json_entries['all'][group_id_key]
-
-        if json_entries['all']:
-            self.enum_index(json_entries['all'])
-
+        self.enum_index(json_entries['all'])
         self.json_dump(json_entries)
         return for_log
+
+    def show_archive(self):
+        pass

@@ -1,4 +1,4 @@
-""" logging informations:
+""" log module informations:
 DEBUG FILE LOCATION: /home/$USER/.arc-tasks/debug.log
 INFO FILE LOCATION: /home/$USER/.arc-tasks/store.log
 FORMAT: 2023-01-05__10:10:19__PM:LEVEL: message
@@ -7,9 +7,9 @@ LEVEL INFO: user-entries, user-commands """
 
 import os
 import logging
-from resolve import DIR_PATH, ShellFormatting
+from resolve import DIR_PATH, TerminalFormatting
 
-sy = ShellFormatting.SYMBOL
+sy = TerminalFormatting.SYMBOL
 
 
 class MainLogConfig:
