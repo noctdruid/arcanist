@@ -6,14 +6,18 @@ import curses
 class Archive:
 
     def __init__(self):
-        """Very simple presentation of archived tasks."""
+        """Very simple presentation of archived tasks.
+        [DD-MMM-YYYY] 'symbol' 'group name'
+        'symbol' 'task 1 desc...'
+        'symbol' 'task 2 desc...'
+        'symbol' 'task N desc...'"""
         self.done = '✔'
         self.not_done = '☐'
 
     def transform(self, group) -> dict:
         """Method for preparing group and tasks for json store.
-        :param group: ?
-        :return: ?"""
+        :param group: dict containing group and tasks,
+        :return: formatted dict containing group and tasks."""
         name = group['name']
         group_dict = {'date': now, 'name': name, 'tasks': []}
 
@@ -29,7 +33,6 @@ class Archive:
             # insert task object in group object
             group_dict['tasks'].append(task_dict)
 
-        # return: json object ready
         return group_dict
 
     def stack(self, archive) -> str:
@@ -108,7 +111,7 @@ class ArchiveUI:
     def run(self):
         """Starting curses."""
         try:
-            self.input_stream()
+            self.input_stream()  # user-inputs
         except KeyboardInterrupt:
             pass
         finally:
@@ -261,7 +264,7 @@ class ArchiveUI:
     def parse_line(self, multi_line) -> list:
         """Parsing task entries that are longer than
         terminal columns-width.
-        :return: list with multi line task parts"""
+        :return: list with multi-line task parts"""
         parts = []
         row_words = []
         words = multi_line.split(' ')

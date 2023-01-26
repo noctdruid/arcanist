@@ -6,15 +6,16 @@ from arc.doc import Man, Notifications
 
 
 class Group:
-    """Group composition."""
+    """Group composition.
+    :param id_key: program defined next-key,
+    :param name: user assigned group name."""
     def __init__(self, id_key, name):
         self.id_key = id_key
         self.name = name
         self.tasks = []
 
     def make_group(self):
-        f_dict = self.__dict__
-        return f_dict
+        return self.__dict__
 
 
 class Task:
@@ -41,14 +42,17 @@ class Task:
 
     # task-changes
     def start_task(self):
+        """Changing task status to in-progress."""
         task = {'status': 'inprog', 'end': self.end_}
         return task
 
     def finish_task(self):
+        """Marking task as done."""
         task = {'status': 'done', 'end': now}
         return task
 
     def reverse_task(self):
+        """Putting task in initial state: pending."""
         task = {'status': 'pending', 'end': self.end_}
         return task
 
@@ -56,18 +60,20 @@ class Task:
 class Operations:
 
     def __init__(self):
-        """doc"""
+        """Class for doing user-induced operations and logging changes."""
         self.single = self.SingleOperations
         self.multi = self.MultiOperations
         self.special = self.SpecialOperations
 
     class SingleOperations:
-        """ Class for single-input/positional operations """
+
         def __init__(self, **kwargs):
+            """Class for single-input/positional operation."""
             self.kwargs = kwargs
             self.json_obj = JsonInteraction().json_load()
 
         def create(self):
+            """Create new group and first task within."""
             group_name = self.kwargs['group_name']
             task_name = self.kwargs['task_name']
             json_obj = self.json_obj['all']
@@ -88,6 +94,7 @@ class Operations:
             print(Notifications().notify('create', group_name, task_name))
 
         def task(self):
+            """Assign task to the existing group."""
             group_id_key = self.kwargs['group_id_key'] - 1
             task_name = self.kwargs['task_name']
             json_obj = self.json_obj['all'][group_id_key]['tasks']
@@ -106,6 +113,7 @@ class Operations:
             print(Notifications().notify('task', task_name, group_name))
 
         def group(self):
+            """Change group name."""
             group_id_key = self.kwargs['group_id_key'] - 1
             group_name = self.kwargs['group_name']
             old_name = self.json_obj['all'][group_id_key]['name']
@@ -120,6 +128,7 @@ class Operations:
             print(Notifications().notify('group', old_name, group_name))
 
         def edit(self):
+            """Change task description."""
             group_id_key = self.kwargs['group_id_key'] - 1
             task_id_key = self.kwargs['task_id_key'] - 1
             task_name = self.kwargs['task_name']
@@ -142,6 +151,7 @@ class Operations:
             )
 
         def remove(self):
+            """Remove task."""
             group_id_key = self.kwargs['group_id_key'] - 1
             task_id_key = self.kwargs['task_id_key'] - 1
             json_obj = self.json_obj['all'][group_id_key]['tasks']
@@ -165,6 +175,7 @@ class Operations:
             print(Notifications().notify('remove', task_name, group_name))
 
         def archive(self, group_id_key):
+            """Archive group."""
             group = JsonInteraction().archive_group(group_id_key - 1)
             cmd = 'archive group'
             group_name = group['name']
@@ -183,6 +194,7 @@ class Operations:
             print(Notifications().notify('archive', group_name))
 
         def purge(self, group_id_key):
+            """Purge group."""
             group = JsonInteraction().purge_group(group_id_key - 1)
             cmd = 'purge group'
             group_name = group['name']
@@ -201,12 +213,14 @@ class Operations:
             print(Notifications().notify('purge', group_name))
 
     class MultiOperations:
-        """ This class is for start/finish options,
-        it supports multi-inputs """
+
         def __init__(self):
+            """This class is for start/finish options,
+            it supports multi-args input."""
             self.json_obj = JsonInteraction().json_load()
 
         def start(self, *args):
+            """Start task(s) within group."""
             group = self.json_obj['all'][args[0] - 1]['tasks']
             list_of_keys = [x + 1 for x in range(len(group))]
 
@@ -247,6 +261,7 @@ class Operations:
             JsonInteraction().json_dump(self.json_obj)
 
         def finish(self, *args):
+            """Finish task(s) within group."""
             group = self.json_obj['all'][args[0] - 1]['tasks']
             list_of_keys = [x + 1 for x in range(len(group))]
 
@@ -287,11 +302,13 @@ class Operations:
             JsonInteraction().json_dump(self.json_obj)
 
     class SpecialOperations:
-        """ Class intended only for output operations """
+
         def __init__(self):
+            """Class intended only for output operations."""
             self.json_obj = JsonInteraction().json_load()
 
         def board(self):
+            """Show board."""
             if JsonInteraction().user_entries():
                 json_obj = self.json_obj['all']
 
@@ -339,18 +356,23 @@ class Operations:
                 print('no task entries, try --help or --guide.')
 
         def expand(self, *id_keys):
+            """Expand task that can't fit in terminal width."""
             JsonInteraction().expand_task_description(
                 id_keys[0] - 1, id_keys[1] - 1
             )
 
         def show(self):
+            """Show archive."""
             JsonInteraction().show_archive()
 
         def reset(self):
+            """Reset board, archive/logs unchanged."""
             JsonInteraction().json_reset()
 
         def help_(self):
+            """Show help page."""
             print(Man.HELP)
 
         def usage(self):
+            """Show usage examples page."""
             print(Man.USAGE)

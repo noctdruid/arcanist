@@ -28,17 +28,17 @@ class JsonTestCase(unittest.TestCase):
         JsonInteraction().json_dump(json_obj)
         get_id = JsonInteraction().index_assign(json_obj['all'])
         group_pattern = {
-            'id': get_id,
+            'id_key': get_id,
             'name': 'MyGroup',
             'tasks': [],
         }
         load = JsonInteraction().json_load()
         load['all'].append(group_pattern)
         pick_element = load['all'][0]
-        self.assertEqual(pick_element['id'], 1)
+        self.assertEqual(pick_element['id_key'], 1)
 
         task_pattern = {
-            'id': 1,
+            'id_key': 1,
             'status': 'pending',
             'start': '28-DEC-2022',
             'end': '     -     ',
@@ -54,7 +54,7 @@ class JsonTestCase(unittest.TestCase):
         JsonInteraction().json_dump(json_obj)
         get_id = JsonInteraction().index_assign(json_obj['all'])
         group_pattern = {
-            'id': get_id,
+            'id_key': get_id,
             'name': 'MyGroup',
             'tasks': [],
         }
@@ -69,7 +69,7 @@ class JsonTestCase(unittest.TestCase):
         json_obj = {'all': []}
         JsonInteraction().json_dump(json_obj)
         group_pattern = {
-            'id': 1,
+            'id_key': 1,
             'name': 'MyGroup',
             'tasks': [],
         }
@@ -83,13 +83,13 @@ class ResolveTestCase(unittest.TestCase):
     def test_shell_allowed_one(self):
         # test if shell is allowed
         shell_instance = TerminalFormatting()
-        shell_instance.user_shell_width = 72
+        shell_instance.user_shell_width = 80
         self.assertTrue(shell_instance.shell_allowed())
 
     def test_shell_allowed_two(self):
         # test if shell is allowed
         shell_instance = TerminalFormatting()
-        shell_instance.user_shell_width = 70
+        shell_instance.user_shell_width = 78
         self.assertFalse(shell_instance.shell_allowed())
 
     def test_add_space(self):

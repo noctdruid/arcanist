@@ -7,7 +7,7 @@ from arc.archive import Archive, ArchiveUI
 
 
 class JsonInteraction:
-    """Class as a driver between program operations and json i/o."""
+    """Class as a driver between program operations and json file i/o."""
     json_path = os.path.join(dir_path, 'arc.json')
     archive_path = os.path.join(dir_path, 'archive.json')
     json_object = {'all': []}  # main json object for storing groups array
@@ -67,7 +67,7 @@ class JsonInteraction:
             DebugLog().log_exception()
             sys.exit(1)
 
-    def json_reset(self, json_file=json_path):
+    def json_reset(self):
         # method to remove all user entries in json file
         try:
             confirm = input('Are u sure? y/n: ')
@@ -94,8 +94,8 @@ class JsonInteraction:
             return False
 
     def index_assign(self, json_list):
-        # method for assigning id_keys to groups/tasks
-        # first condition is only applicable to first group+task created
+        """Method for assigning id_keys to groups/tasks,
+        first condition is only applicable to first group+task created."""
         if not self.user_entries():
             return 1
         else:
@@ -104,7 +104,7 @@ class JsonInteraction:
             return new_highest_id_key
 
     def enum_index(self, json_list):
-        # method for enumerating json indexes
+        """Method for enumerating json indexes."""
         id_key = 1
         for item in json_list:
             item.update({'id_key': id_key})
@@ -112,7 +112,7 @@ class JsonInteraction:
         return json_list
 
     def change_group_name(self, *args):
-        # method for changing group name
+        """Method for changing group name."""
         json_entries = self.json_load()
         group_id_key = args[0]
         new_group_name = args[1]
@@ -122,8 +122,8 @@ class JsonInteraction:
         self.json_dump(json_entries)
 
     def expand_task_description(self, *args):
-        # method for getting full task description,
-        # in case: formatted task can't full fit in terminal size
+        """Method for getting full task description,
+        in case: formatted task can't full fit in terminal size."""
         json_entries = self.json_load()
         group_id_key = args[0]
         task_id_key = args[1]
@@ -132,8 +132,8 @@ class JsonInteraction:
         print(task['desc'])
 
     def archive_group(self, group_id_key):
-        # method for archiving whole group,
-        # deleting group and calling enum_index and returning object for log
+        """Method for archiving whole group,
+        deleting group and calling enum_index and returning object for log."""
         json_entries = self.json_load()
         archive_entries = self.json_load(json_file=self.archive_path)
 
@@ -149,7 +149,8 @@ class JsonInteraction:
         return for_log
 
     def purge_group(self, group_id_key):
-        """doc"""
+        """Method for purging whole group and task entries, enumerating
+        group indexes and returning object for log."""
         json_entries = self.json_load()
         try:
             confirm = input('Are u sure? y/n: ')
@@ -171,7 +172,7 @@ class JsonInteraction:
         return for_log
 
     def show_archive(self):
-        """doc"""
+        """Show archive with curses library."""
         archive = self.json_load(json_file=JsonInteraction.archive_path)
         format_arhive = Archive().stack(archive)
         ArchiveUI(format_arhive).run()

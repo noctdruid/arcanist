@@ -21,11 +21,15 @@ class InitCheckout:
         elif TerminalFormatting().shell_allowed():
             return
 
+        else:
+            print('terminal width or lines less than 80x20')
+            sys.exit(1)
+
     def _term_checkout(self) -> bool:
         """List of tested-terminals that support ansi escape seq."""
         your_term = os.getenv('TERM')
         supp_term = [
-            'xterm', 'xterm-16color', 'xterm-256color', 'iTerm2',
+            'xterm', 'xterm-16color', 'xterm-256color',
         ]  # if you have different terminal that supports ansi escape seq
         # ... you can add it here in supp_term list
 
@@ -61,6 +65,7 @@ class TerminalFormatting:
     SYMBOL = ('☐', '…', '➤', '✔', '🞂', '#', '█')
     MIN_GEN_CHARS = 36  # minimal number of generic characters
     user_shell_width = shutil.get_terminal_size().columns
+    user_shell_lines = shutil.get_terminal_size().lines
 
     def __init__(self):
         """Class for terminal properties, formatting projections.
@@ -68,9 +73,14 @@ class TerminalFormatting:
         :attr MIN_SHELL_ALLOWED: for comfortable usage-experience."""
         self.SHELL_PADS = 8
         self.MIN_SHELL_ALLOWED = 80
+        self.MIN_SHELL_LINES = 20
 
     def shell_allowed(self) -> bool:
-        if self.MIN_SHELL_ALLOWED <= self.user_shell_width:
+        """Check if term-width >= 80 and term-lines >= 20."""
+        if (
+            (self.MIN_SHELL_ALLOWED <= self.user_shell_width) and
+            (self.MIN_SHELL_LINES <= self.user_shell_lines)
+        ):
             return True
 
     def add_space(self, digit) -> str:
