@@ -1,25 +1,25 @@
 class Man:
-    """ Multi-line help/guide command outputs """
+    """Multi-line help/guide command outputs."""
     HELP = """
     usage: arc-tasks [OPT]
     for usage examples type: arc-tasks --usage
 
-    -c, --create: create group & task
-    -t, --task: add task to the group
-    -g, --group: change name of the group
-    -e, --edit: edit task description
-    -r, --remove: remove task
-    -a, --archive: archive whole group date-based
-    -p, --purge: purge whole group and tasks
-    -s, --start: change state of task(s) to 'in progress'
-    -f, --finish: change state of task(s) to 'done'
+    -c, --create        create group & task
+    -t, --task          add task to the group
+    -g, --group         change name of the group
+    -e, --edit          edit task description
+    -r, --remove        remove task
+    -a, --archive       archive whole group date-based
+    -p, --purge         purge whole group and tasks
+    -s, --start         change state of task(s) to 'in progress'
+    -f, --finish        change state of task(s) to 'done'
 
-    --board: show tasks board (default)
-    --expand: expand task description
-    --show: show archived tasks
-    --reset: restart program to no task entries
-    --help: show this help message
-    --usage: show examples of usage
+    --board             show tasks board (default)
+    --expand            expand task description
+    --show              show archived tasks
+    --reset             restart program to no task entries
+    --help              show this help message
+    --usage             show examples of usage
     """
 
     USAGE = """
@@ -44,7 +44,8 @@ class Man:
 
 
 class Notifications:
-    """ Post command-execution notifications """
+    """Post command-execution notifications."""
+    # var for defining notification messaging
     dictkw = {
         'create': 'new group: %s\nnew task: %s',  # 2
         'task': 'task: %s\nassigned to the group: %s',  # 2
@@ -55,7 +56,13 @@ class Notifications:
         'purge': 'whole group deleted: %s',  # 1
     }
 
+    # method for notification delivery
     def notify(self, *args) -> str:
         notification = self.dictkw[args[0]]
         arg_inputs = tuple([x for x in args[1:]])
         return (notification % arg_inputs)
+
+
+# archive window menu
+menu = '[Q] Quit | [KEY_UP][KEY_DOWN][PGUP][PGDN][HOME][END] \
+Navigation | [%d/%d] Page'

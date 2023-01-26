@@ -1,15 +1,15 @@
 import os
 import sys
 import json
-from resolve import DIR_PATH
-from log import DebugLog
-from archive import Archive
+from arc.resolve import DIR_PATH as dir_path
+from arc.log import DebugLog
+from arc.archive import Archive, ArchiveUI
 
 
 class JsonInteraction:
-    """ Class as a driver between program operations and json i/o """
-    json_path = os.path.join(DIR_PATH, 'store.json')
-    archive_path = os.path.join(DIR_PATH, 'archive.json')
+    """Class as a driver between program operations and json i/o."""
+    json_path = os.path.join(dir_path, 'arc.json')
+    archive_path = os.path.join(dir_path, 'archive.json')
     json_object = {'all': []}  # main json object for storing groups array
 
     def _json_decode_resolve(self, path) -> bool:
@@ -136,32 +136,20 @@ class JsonInteraction:
         # deleting group and calling enum_index and returning object for log
         json_entries = self.json_load()
         archive_entries = self.json_load(json_file=self.archive_path)
-        try:
-            confirm = input('Are u sure? y/n: ')
-            if confirm.lower() == 'y':
-                pass
-            else:
-                print('archiving aborted...')
-                sys.exit(0)
-
-        except KeyboardInterrupt:
-            DebugLog().log_exception()
-            sys.exit(1)
 
         for_log = json_entries['all'][group_id_key]
         out = Archive().transform(for_log)
 
         archive_entries['all'].append(out)
+        self.json_dump(archive_entries, json_file=self.archive_path)
 
         del json_entries['all'][group_id_key]
         self.enum_index(json_entries['all'])
-        self.json_dump(archive_entries, json_file=self.archive_path)
         self.json_dump(json_entries)
         return for_log
 
     def purge_group(self, group_id_key):
-        # method for deleting whole group,
-        # calling enum_index and returning object for log
+        """doc"""
         json_entries = self.json_load()
         try:
             confirm = input('Are u sure? y/n: ')
@@ -183,4 +171,7 @@ class JsonInteraction:
         return for_log
 
     def show_archive(self):
-        pass
+        """doc"""
+        archive = self.json_load(json_file=JsonInteraction.archive_path)
+        format_arhive = Archive().stack(archive)
+        ArchiveUI(format_arhive).run()

@@ -7,8 +7,13 @@ from arc.resolve import InitCheckout
 
 
 class Interface:
-    """ Argparse library interface """
+
     def _init_args(self):
+        """Method for building argparse library interface.
+        :func parser: argparse configurator,
+        :func parser.add_argument: configuring cli argument option
+        and expected specification of inputs."""
+
         self.parser = argparse.ArgumentParser(
             prog='arc-tasks',
             description='Minimalistic cli task-objectives tracking.',
@@ -72,12 +77,14 @@ class Interface:
             '--usage', action='store_true', dest='usage'
         )
 
+        # Namespace that holds objects
         args = self.parser.parse_args()
         return args
 
     def _cli_policy(self):
-        """ Method to adjust user-behaviour """
+        """Method to adjust user-behaviour inputs."""
         if sys.argv[0] == sys.argv[-1]:
+            # bool - representation of is there user-input args?
             return False
 
         MAX_ARGS = 1
@@ -91,20 +98,20 @@ class Interface:
                 if value:
                     input_args += 1
                     if input_args > MAX_ARGS:
-                        raise SyntaxError('multiple options input.')
+                        raise SyntaxError('more than one arg forbidden')
 
         except SyntaxError:
             print('error: only one option allowed per execution.')
             DebugLog().log_exception()
             sys.exit(1)
 
-        # isolate right key-value, get rid of others
+        # isolate right key-value
         for key, value in args.items():
             if value:
                 pair = (key, value)
                 break
 
-        # for multi-type cases convert numbers to int type
+        # for multi-type cases convert numbers from str to int type
         if pair[0] in MIXED_TYPE:
             try:
                 if pair[0] == MIXED_TYPE[0] or pair[0] == MIXED_TYPE[1]:
@@ -121,14 +128,19 @@ class Interface:
         return pair
 
     def initialize_args(self):
-        """ method to initialize argparse cli """
+        """Method to initialize argparse cli."""
+        # check if there is problem with directory
         try:
             if InitCheckout().dir_check():
+                # directory is regular
                 pass
             else:
-                raise OSError('directory corruption')
+                # problem with directory existence/permission or
+                # different type of problem unknown
+                raise OSError
 
         except OSError:
+            # exit program and deliver notification
             user = os.getenv('USER')
             print('problem with store directory:')
             print(f'/home/{user}/.arc-tasks/')
@@ -136,6 +148,7 @@ class Interface:
             sys.exit(1)
 
         args = self._cli_policy()
+        # dict for program operations in str type
         action_library = {
             'create':
                 'Operations().single(group_name=args[1][0],' +
@@ -169,7 +182,10 @@ class Interface:
             'usage': 'Operations().special().usage()',
         }
 
+        # condition: if there is or there is not user cli inputs
         if args is False:
+            # no inputs
             Operations().special().board()
         else:
+            # there is input(s), eval dict str
             eval(action_library[args[0]])

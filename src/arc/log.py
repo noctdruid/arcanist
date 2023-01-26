@@ -1,13 +1,13 @@
 """ log module informations:
 DEBUG FILE LOCATION: /home/$USER/.arc-tasks/debug.log
-INFO FILE LOCATION: /home/$USER/.arc-tasks/store.log
+INFO FILE LOCATION: /home/$USER/.arc-tasks/history.log
 FORMAT: 2023-01-05__10:10:19__PM:LEVEL: message
 LEVEL DEBUG: exceptions
 LEVEL INFO: user-entries, user-commands """
 
 import os
 import logging
-from resolve import DIR_PATH, TerminalFormatting
+from arc.resolve import DIR_PATH, TerminalFormatting
 
 sy = TerminalFormatting.SYMBOL
 
@@ -43,7 +43,7 @@ class DebugLog(MainLogConfig):
 
 class InfoLog(MainLogConfig):
     """ Logging nicely formatted user-entries """
-    log_path = os.path.join(DIR_PATH, 'store.log')
+    log_path = os.path.join(DIR_PATH, 'history.log')
     log_level = logging.INFO
 
     def __init__(self):

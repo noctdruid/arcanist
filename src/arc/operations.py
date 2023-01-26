@@ -6,7 +6,7 @@ from arc.doc import Man, Notifications
 
 
 class Group:
-    """ Group composition """
+    """Group composition."""
     def __init__(self, id_key, name):
         self.id_key = id_key
         self.name = name
@@ -18,53 +18,45 @@ class Group:
 
 
 class Task:
-    """ Task value changes """
+
     def __init__(self, **kwargs):
+        """Clas for task value changes.
+        :param kwargs: different task construction attributes,
+        :attr end: hypothetical end-date placeholder. """
         self.kwargs = kwargs
-        self._end = '     -     '
+        self.end_ = '     -     '
 
     def new_task(self):
+        """Base task construction."""
         id_key = self.kwargs['id_key']
         task_desc = self.kwargs['task_desc']
         task = {
             'id_key': id_key,
             'status': 'pending',
             'start': now,
-            'end': self._end,
+            'end': self.end_,
             'desc': task_desc
         }
-
         return task
 
+    # task-changes
     def start_task(self):
-        task = {
-            'status': 'inprog',
-            'end': self._end,
-        }
-
+        task = {'status': 'inprog', 'end': self.end_}
         return task
 
     def finish_task(self):
-        task = {
-            'status': 'done',
-            'end': now,
-        }
-
+        task = {'status': 'done', 'end': now}
         return task
 
     def reverse_task(self):
-        task = {
-            'status': 'pending',
-            'end': self._end
-        }
-
+        task = {'status': 'pending', 'end': self.end_}
         return task
 
 
 class Operations:
-    """ doc """
 
     def __init__(self):
+        """doc"""
         self.single = self.SingleOperations
         self.multi = self.MultiOperations
         self.special = self.SpecialOperations
@@ -352,7 +344,7 @@ class Operations:
             )
 
         def show(self):
-            pass
+            JsonInteraction().show_archive()
 
         def reset(self):
             JsonInteraction().json_reset()
