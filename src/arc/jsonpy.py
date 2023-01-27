@@ -27,6 +27,11 @@ class JsonInteraction:
             self.json_dump(self.json_object)
             return True
 
+        except PermissionError:
+            DebugLog().log_exception()
+            print('error: permission denied')
+            sys.exit(1)
+
         except json.decoder.JSONDecodeError:
             DebugLog().log_exception()
             self.json_dump(self.json_object, json_file=path)
