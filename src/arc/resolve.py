@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import shutil
 from datetime import datetime
 
@@ -53,6 +54,18 @@ class InitCheckout:
         elif not dir_exist:
             # create directory
             os.mkdir(path)
+            json_object = json.dumps({'all': []}, indent=4)
+            arc_store = os.path.join(DIR_PATH, 'arc.json')
+            archive_store = os.path.join(DIR_PATH, 'archive.json')
+
+            with open(arc_store, 'w') as newfile:
+                newfile.write(json_object)
+                newfile.close()
+
+            with open(archive_store, 'w') as newfile:
+                newfile.write(json_object)
+                newfile.close()
+
             return True
 
         else:
