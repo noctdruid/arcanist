@@ -14,11 +14,11 @@ class Archive:
         self.done = '✔'
         self.not_done = '☐'
 
-    def transform(self, group) -> dict:
+    def transform(self, group, archive_name) -> dict:
         """Method for preparing group and tasks for json store.
         :param group: dict containing group and tasks,
         :return: formatted dict containing group and tasks."""
-        name = group['name']
+        name = archive_name
         group_dict = {'date': now, 'name': name, 'tasks': []}
 
         # get task variables

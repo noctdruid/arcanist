@@ -13,6 +13,7 @@ class JsonInteraction:
     json_object = {'all': []}  # main json object for storing groups array
 
     def _json_decode_resolve(self, path) -> bool:
+        """Internal function for resolving json problems."""
         try:
             opened_file = open(path, 'r')
             json_dict = json.load(opened_file)
@@ -32,6 +33,13 @@ class JsonInteraction:
             print('error: permission denied')
             sys.exit(1)
 
+        except FileNotFoundError:
+            json_object = json.dumps(self.json_object, indent=4)
+            with open(path, 'w') as newfile:
+                newfile.write(json_object)
+                newfile.close()
+            return True
+
         except json.decoder.JSONDecodeError:
             DebugLog().log_exception()
             self.json_dump(self.json_object, json_file=path)
@@ -40,40 +48,22 @@ class JsonInteraction:
     def json_load(self, json_file=json_path):
         # decode json to dict
         is_true = self._json_decode_resolve(json_file)
-        try:
-            if is_true:
-                opened_file = open(json_file, 'r')
-                json_dict = json.load(opened_file)
-                opened_file.close()
-                return json_dict
-
-        except FileNotFoundError:
-            DebugLog().log_exception()
-            sys.exit(1)
-
-        except PermissionError:
-            print("error: file doesn't have right permissions")
-            DebugLog().log_exception()
-            sys.exit(1)
+        if is_true:
+            opened_file = open(json_file, 'r')
+            json_dict = json.load(opened_file)
+            opened_file.close()
+            return json_dict
 
     def json_dump(self, json_dict, json_file=json_path):
         # encode dict to json
-        try:
+        is_true = self._json_decode_resolve(json_file)
+        if is_true:
             opened_file = open(json_file, 'w')
             json.dump(json_dict, opened_file, indent=4)
             opened_file.close()
 
-        except FileNotFoundError:
-            DebugLog().log_exception()
-            sys.exit(1)
-
-        except PermissionError:
-            print("error: file doesn't have right permissions")
-            DebugLog().log_exception()
-            sys.exit(1)
-
     def json_reset(self):
-        # method to remove all user entries in json file
+        # method to remove all user entries in arc.json file
         try:
             confirm = input('Are u sure? y/n: ')
             if confirm.lower() == 'y':
@@ -136,14 +126,14 @@ class JsonInteraction:
         task = json_entries['all'][group_id_key]['tasks'][task_id_key]
         print(task['desc'])
 
-    def archive_group(self, group_id_key):
+    def archive_group(self, group_id_key, archive_name):
         """Method for archiving whole group,
         deleting group and calling enum_index and returning object for log."""
         json_entries = self.json_load()
         archive_entries = self.json_load(json_file=self.archive_path)
 
         for_log = json_entries['all'][group_id_key]
-        out = Archive().transform(for_log)
+        out = Archive().transform(for_log, archive_name)
 
         archive_entries['all'].append(out)
         self.json_dump(archive_entries, json_file=self.archive_path)

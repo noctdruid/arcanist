@@ -43,7 +43,7 @@ class Interface:
         )
         self.parser.add_argument(
             '-a', '--archive', action='store', dest='archive',
-            type=int, nargs=1
+            type=str, nargs=2
         )
         self.parser.add_argument(
             '-p', '--purge', action='store', dest='purge',
@@ -88,7 +88,7 @@ class Interface:
             return False
 
         MAX_ARGS = 1
-        MIXED_TYPE = ['task', 'group', 'edit']
+        MIXED_TYPE = ['task', 'group', 'edit', 'archive']
         args = vars(self._init_args())
 
         # loop to check if there is more than one opt
@@ -114,7 +114,8 @@ class Interface:
         # for multi-type cases convert numbers from str to int type
         if pair[0] in MIXED_TYPE:
             try:
-                if pair[0] == MIXED_TYPE[0] or pair[0] == MIXED_TYPE[1]:
+                if (pair[0] == MIXED_TYPE[0] or pair[0] == MIXED_TYPE[1] or
+                        pair[0] == MIXED_TYPE[3]):
                     pair[1][0] = int(pair[1][0])
                 elif pair[0] == MIXED_TYPE[2]:
                     pair[1][0] = int(pair[1][0])
@@ -170,7 +171,7 @@ class Interface:
                 'Operations().single(group_id_key=args[1][0],' +
                 'task_id_key=args[1][1]).remove()',
 
-            'archive': 'Operations().single().archive(*args[1])',
+            'archive': 'Operations().single().archive(args[1][0], args[1][1])',
             'purge': 'Operations().single().purge(*args[1])',
             'start': 'Operations().multi().start(*args[1])',
             'finish': 'Operations().multi().finish(*args[1])',

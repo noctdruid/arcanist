@@ -40,7 +40,7 @@ class DebugLog(MainLogConfig):
             exc_info=True
         )
 
-        self.logger.debug('\n')
+        self.logging.debug('\n')
 
 
 class InfoLog(MainLogConfig):

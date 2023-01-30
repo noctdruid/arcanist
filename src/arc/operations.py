@@ -174,11 +174,12 @@ class Operations:
             # Notification
             print(Notifications().notify('remove', task_name, group_name))
 
-        def archive(self, group_id_key):
+        def archive(self, group_id_key, archive_name):
             """Archive group."""
-            group = JsonInteraction().archive_group(group_id_key - 1)
+            name = archive_name
+            group = JsonInteraction().archive_group(group_id_key - 1, name)
             cmd = 'archive group'
-            group_name = group['name']
+            group_name = archive_name
             tasks = group['tasks']
 
             list_of_tasks = []
