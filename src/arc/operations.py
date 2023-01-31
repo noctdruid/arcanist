@@ -176,10 +176,10 @@ class Operations:
 
         def archive(self, group_id_key, archive_name):
             """Archive group."""
-            name = archive_name
-            group = JsonInteraction().archive_group(group_id_key - 1, name)
+            group = JsonInteraction().archive_group(
+                group_id_key - 1, archive_name
+            )
             cmd = 'archive group'
-            group_name = archive_name
             tasks = group['tasks']
 
             list_of_tasks = []
@@ -187,12 +187,12 @@ class Operations:
                 list_of_tasks.append(task['desc'])
 
             InfoLog().log_entries((
-                (cmd, group_name),
+                (cmd, archive_name),
                 list_of_tasks
             ))
 
             # Notification
-            print(Notifications().notify('archive', group_name))
+            print(Notifications().notify('archive', archive_name))
 
         def purge(self, group_id_key):
             """Purge group."""
@@ -349,12 +349,32 @@ class Operations:
                             not_done += 1
 
                 statistics_f = \
-                    Board()._statistics(done, doing, not_done)
+                    Board().statistics(done, doing, not_done)
                 print(f'\n    {statistics_f[0]}')
                 print(f'    {statistics_f[1]}\n')
 
             else:
                 print('no task entries, try --help or --guide.')
+
+        def append_archive(self, group_id_key, archive_name):
+            """Append group to existing archive."""
+            group = JsonInteraction().append_archive(
+                group_id_key - 1, archive_name
+            )
+            cmd = 'archive append group'
+            tasks = group['tasks']
+
+            list_of_tasks = []
+            for task in tasks:
+                list_of_tasks.append(task['desc'])
+
+            InfoLog().log_entries((
+                (cmd, archive_name),
+                list_of_tasks
+            ))
+
+            # Notification
+            print(Notifications().notify('append', archive_name))
 
         def expand(self, *id_keys):
             """Expand task that can't fit in terminal width."""

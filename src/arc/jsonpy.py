@@ -30,10 +30,10 @@ class JsonInteraction:
 
         except PermissionError:
             DebugLog().log_exception()
-            print('error: permission denied')
-            sys.exit(1)
+            sys.exit('error: permission denied')
 
         except FileNotFoundError:
+            DebugLog().log_exception()
             json_object = json.dumps(self.json_object, indent=4)
             with open(path, 'w') as newfile:
                 newfile.write(json_object)
@@ -46,7 +46,7 @@ class JsonInteraction:
             return True
 
     def json_load(self, json_file=json_path):
-        # decode json to dict
+        """Decode json to dict."""
         is_true = self._json_decode_resolve(json_file)
         if is_true:
             opened_file = open(json_file, 'r')
@@ -55,7 +55,7 @@ class JsonInteraction:
             return json_dict
 
     def json_dump(self, json_dict, json_file=json_path):
-        # encode dict to json
+        """Encode dict to json."""
         is_true = self._json_decode_resolve(json_file)
         if is_true:
             opened_file = open(json_file, 'w')
@@ -63,34 +63,35 @@ class JsonInteraction:
             opened_file.close()
 
     def json_reset(self):
-        # method to remove all user entries in arc.json file
+        """Remove all user entries in arc.json file."""
         try:
             confirm = input('Are u sure? y/n: ')
             if confirm.lower() == 'y':
                 self.json_dump(self.json_object)
                 print('all entries are nullified.')
-                print('logs are unchanged.')
+                print('archive and logs unchanged.')
             else:
-                print('reset aborted...')
-                sys.exit(0)
+                sys.exit('reset aborted...')
 
         except KeyboardInterrupt:
             DebugLog().log_exception()
             sys.exit(1)
 
     def user_entries(self):
-        # method to check if there is user entries
+        """Check if there is user entries."""
         json_entries = self.json_load()
         check_group_entries = json_entries['all']
 
         if check_group_entries != []:
+            # User added entry/entries
             return True
         else:
+            # No user entry
             return False
 
     def index_assign(self, json_list):
-        """Method for assigning id_keys to groups/tasks,
-        first condition is only applicable to first group+task created."""
+        """Assigning id_keys to groups/tasks, first condition
+        is only applicable to the first group+task created."""
         if not self.user_entries():
             return 1
         else:
@@ -99,7 +100,7 @@ class JsonInteraction:
             return new_highest_id_key
 
     def enum_index(self, json_list):
-        """Method for enumerating json indexes."""
+        """Enumerating json indexes."""
         id_key = 1
         for item in json_list:
             item.update({'id_key': id_key})
@@ -107,7 +108,7 @@ class JsonInteraction:
         return json_list
 
     def change_group_name(self, *args):
-        """Method for changing group name."""
+        """Changing group name."""
         json_entries = self.json_load()
         group_id_key = args[0]
         new_group_name = args[1]
@@ -117,8 +118,8 @@ class JsonInteraction:
         self.json_dump(json_entries)
 
     def expand_task_description(self, *args):
-        """Method for getting full task description,
-        in case: formatted task can't full fit in terminal size."""
+        """Getting full task description, in case:
+        formatted task can't fully fit in terminal size."""
         json_entries = self.json_load()
         group_id_key = args[0]
         task_id_key = args[1]
@@ -127,25 +128,72 @@ class JsonInteraction:
         print(task['desc'])
 
     def archive_group(self, group_id_key, archive_name):
-        """Method for archiving whole group,
-        deleting group and calling enum_index and returning object for log."""
+        """Creating archive, archiving tasks and cleaning."""
         json_entries = self.json_load()
         archive_entries = self.json_load(json_file=self.archive_path)
 
-        for_log = json_entries['all'][group_id_key]
-        out = Archive().transform(for_log, archive_name)
+        # User-entry validation
+        archive_names = []
+        for a in archive_entries['all']:
+            archive_names.append(a['name'])
 
+        if archive_name not in archive_names:
+            pass
+        else:
+            sys.exit(f"err: '{archive_name}' __<--__ already exists")
+
+        # Archiving group
+        group_info = json_entries['all'][group_id_key]
+        out = Archive().transform(group_info, archive_name)
         archive_entries['all'].append(out)
         self.json_dump(archive_entries, json_file=self.archive_path)
 
+        # Cleaning
         del json_entries['all'][group_id_key]
         self.enum_index(json_entries['all'])
         self.json_dump(json_entries)
-        return for_log
+
+        return group_info
+
+    def append_archive(self, group_id_key, archive_name):
+        """Appending tasks to archive and cleaning."""
+        json_entries = self.json_load()
+        archive_entries = self.json_load(json_file=self.archive_path)
+
+        # User-entry validation and array archive matching
+        archive_names = []
+        archive_id = 0
+        for a in archive_entries['all']:
+            if a['name'] == archive_name:
+                archive_names.append(a['name'])
+                break
+            else:
+                archive_names.append(a['name'])
+                archive_id += 1
+
+        if archive_name in archive_names:
+            pass
+        else:
+            sys.exit(f"'{archive_name}' __<--__ archive doesn't exist")
+
+        # Archiving additional tasks
+        group_info = json_entries['all'][group_id_key]
+        out = Archive().transform(group_info)
+        tasks = archive_entries['all'][archive_id]['tasks']
+        for t in out['tasks']:
+            # Adding task by task in archive
+            tasks.append(t)
+        self.json_dump(archive_entries, json_file=self.archive_path)
+
+        # Cleaning
+        del json_entries['all'][group_id_key]
+        self.enum_index(json_entries['all'])
+        self.json_dump(json_entries)
+
+        return group_info
 
     def purge_group(self, group_id_key):
-        """Method for purging whole group and task entries, enumerating
-        group indexes and returning object for log."""
+        """Purging whole group/task entries and cleaning."""
         json_entries = self.json_load()
         try:
             confirm = input('Are u sure? y/n: ')
@@ -159,15 +207,17 @@ class JsonInteraction:
             DebugLog().log_exception()
             sys.exit(1)
 
-        for_log = json_entries['all'][group_id_key]
+        group_info = json_entries['all'][group_id_key]
 
+        # Cleaning
         del json_entries['all'][group_id_key]
         self.enum_index(json_entries['all'])
         self.json_dump(json_entries)
-        return for_log
+
+        return group_info
 
     def show_archive(self):
         """Show archive with curses library."""
         archive = self.json_load(json_file=JsonInteraction.archive_path)
-        format_arhive = Archive().stack(archive)
-        ArchiveUI(format_arhive).run()
+        format_archive = Archive().stack(archive)
+        ArchiveUI(format_archive).run()

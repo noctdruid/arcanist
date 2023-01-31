@@ -23,8 +23,7 @@ class InitCheckout:
             return
 
         else:
-            print('terminal width or lines less than 80x20')
-            sys.exit(1)
+            sys.exit('error: terminal width or lines less than 80x20')
 
     def _term_checkout(self) -> bool:
         """List of tested-terminals that support ansi escape seq."""
@@ -40,7 +39,7 @@ class InitCheckout:
             return False
 
     def dir_check(self, path=DIR_PATH) -> bool:
-        """ Method for checking directory """
+        """Checking directory."""
         dir_exist = os.path.isdir(path)
 
         if dir_exist:
@@ -48,11 +47,10 @@ class InitCheckout:
             if dir_perm:
                 return True
             else:
-                print(f'check if directory has right permissions:\n{path}')
-                sys.exit(1)
+                sys.exit(f'check if directory has right permissions:\n{path}')
 
         elif not dir_exist:
-            # create directory
+            # Create directory
             os.mkdir(path)
             json_object = json.dumps({'all': []}, indent=4)
             arc_store = os.path.join(DIR_PATH, 'arc.json')
@@ -69,7 +67,7 @@ class InitCheckout:
             return True
 
         else:
-            # possible system corruption
+            # Possible system corruptions
             return False
 
 
@@ -105,7 +103,7 @@ class TerminalFormatting:
             return str(digit)
 
     def measure_task_desc(self, input_string) -> int:
-        """ Measure maximum task description length before it
+        """Measure maximum task description length before it
         get across new line.
         :return: int type difference between:
             - program allowed task description length

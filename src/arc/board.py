@@ -15,7 +15,7 @@ class Board:
         else - don't use.
         :attr s: single space
         :attr t: four spaces (tab)
-        :attr sq, pending, inprog, arrow, done: iso chars,
+        :attr sq, pending, inprog, arrow, done: utf chars,
         :attr user_shell: get size of char columns width,
         :attr generic: generic chars always on same position."""
 
@@ -90,7 +90,7 @@ class Board:
             args[3], self.sq, f_desc
         )
 
-    def _statistics(self, done, doing, not_done):
+    def statistics(self, done, doing, not_done):
         """Method for printing overall statistics."""
         # calculation of statistics, formatting
         total = done + doing + not_done

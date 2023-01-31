@@ -14,8 +14,8 @@ class Archive:
         self.done = '✔'
         self.not_done = '☐'
 
-    def transform(self, group, archive_name) -> dict:
-        """Method for preparing group and tasks for json store.
+    def transform(self, group, archive_name=None) -> dict:
+        """Preparing group and tasks for json store.
         :param group: dict containing group and tasks,
         :return: formatted dict containing group and tasks."""
         name = archive_name

@@ -61,6 +61,10 @@ class Interface:
             '--board', action='store_true', dest='board'
         )
         self.parser.add_argument(
+            '--append', action='store', dest='append',
+            type=str, nargs=2
+        )
+        self.parser.add_argument(
             '--expand', action='store', dest='expand',
             type=int, nargs=2
         )
@@ -88,7 +92,7 @@ class Interface:
             return False
 
         MAX_ARGS = 1
-        MIXED_TYPE = ['task', 'group', 'edit', 'archive']
+        MIXED_TYPE = ['task', 'group', 'edit', 'archive', 'append']
         args = vars(self._init_args())
 
         # loop to check if there is more than one opt
@@ -101,9 +105,8 @@ class Interface:
                         raise SyntaxError('more than one arg forbidden')
 
         except SyntaxError:
-            print('error: only one option allowed per execution.')
             DebugLog().log_exception()
-            sys.exit(1)
+            sys.exit('error: only one option allowed per execution.')
 
         # isolate right key-value
         for key, value in args.items():
@@ -115,16 +118,15 @@ class Interface:
         if pair[0] in MIXED_TYPE:
             try:
                 if (pair[0] == MIXED_TYPE[0] or pair[0] == MIXED_TYPE[1] or
-                        pair[0] == MIXED_TYPE[3]):
+                        pair[0] == MIXED_TYPE[3] or pair[0] == MIXED_TYPE[4]):
                     pair[1][0] = int(pair[1][0])
                 elif pair[0] == MIXED_TYPE[2]:
                     pair[1][0] = int(pair[1][0])
                     pair[1][1] = int(pair[1][1])
 
             except ValueError:
-                print('error: wrong argument value provided.')
                 DebugLog().log_exception()
-                sys.exit(1)
+                sys.exit('error: wrong argument value provided.')
 
         return pair
 
@@ -143,39 +145,36 @@ class Interface:
         except OSError:
             # exit program and deliver notification
             user = os.getenv('USER')
-            print('problem with store directory:')
-            print(f'/home/{user}/.arc-tasks/')
             DebugLog().log_exception()
-            sys.exit(1)
+            sys.exit(f'directory error: /home/{user}/.arc-tasks/')
 
+        # Isolated cli entry
         args = self._cli_policy()
-        # dict for program operations in str type
+
+        # Dict for program operations
         action_library = {
             'create':
                 'Operations().single(group_name=args[1][0],' +
                 'task_name=args[1][1]).create()',
-
             'task':
                 'Operations().single(group_id_key=args[1][0],' +
                 'task_name=args[1][1]).task()',
-
             'group':
                 'Operations().single(group_id_key=args[1][0],' +
                 'group_name=args[1][1]).group()',
-
             'edit':
                 'Operations().single(group_id_key=args[1][0],' +
                 'task_id_key=args[1][1],task_name=args[1][2]).edit()',
-
             'remove':
                 'Operations().single(group_id_key=args[1][0],' +
                 'task_id_key=args[1][1]).remove()',
-
             'archive': 'Operations().single().archive(args[1][0], args[1][1])',
             'purge': 'Operations().single().purge(*args[1])',
             'start': 'Operations().multi().start(*args[1])',
             'finish': 'Operations().multi().finish(*args[1])',
             'board': 'Operations().special().board()',
+            'append':
+                'Operations().special().append_archive(args[1][0],args[1][1])',
             'expand': 'Operations().special().expand(args[1][0], args[1][1])',
             'show': 'Operations().special().show()',
             'reset': 'Operations().special().reset()',
@@ -185,8 +184,8 @@ class Interface:
 
         # condition: if there is or there is not user cli inputs
         if args is False:
-            # no inputs
+            # No inputs, default command is --board
             Operations().special().board()
         else:
-            # there is input(s), eval dict str
+            # There is input(s), eval dict str
             eval(action_library[args[0]])

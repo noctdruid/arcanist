@@ -1,7 +1,5 @@
 """Log module informations:
-DEBUG FILE LOCATION: /home/$USER/.arc-tasks/debug.log
-INFO FILE LOCATION: /home/$USER/.arc-tasks/history.log
-FORMAT: 2023-01-05__10:10:19__PM:LEVEL: message
+FORMAT: 2023-01-05__10:10:19__PM:LEVEL: new_line_message
 LEVEL DEBUG: exceptions
 LEVEL INFO: user-entries, user-commands."""
 
@@ -34,13 +32,11 @@ class DebugLog(MainLogConfig):
         super().__init__()
 
     def log_exception(self):
-        # Module-level logger
+        # Write exception to debug.log
         self.logger.debug(
             '\n' + 'Exception occured:',
             exc_info=True
         )
-
-        self.logging.debug('\n')
 
 
 class InfoLog(MainLogConfig):
@@ -70,7 +66,7 @@ class InfoLog(MainLogConfig):
     def log_entries(self, filled_pattern):
         """Multi-input blueprint:
         CMD: archive/purge
-        GROUP: group
+        GROUP: group name
         TASKS LIST:
         n1,
         n2,
