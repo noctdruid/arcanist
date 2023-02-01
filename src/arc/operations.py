@@ -147,8 +147,7 @@ class Operations:
             # Notification
             print(Notifications().notify(
                 'edit', group_name, old_name, task_name
-                )
-            )
+            ))
 
         def remove(self):
             """Remove task."""

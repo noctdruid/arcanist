@@ -9,29 +9,28 @@ from arc.archive import Archive
 class ArchiveTestCase(unittest.TestCase):
 
     json_obj = {'all': [{'name': 'MyGroup', 'tasks': [
-            {
-                'id_key': 1,
-                'status': 'pending',
-                'start': '28-DEC-2022',
-                'end': '     -     ',
-                'desc': 'MyNewTask',
-            },
-            {
-                'id_key': 2,
-                'status': 'inprog',
-                'start': '29-DEC-2022',
-                'end': '     -     ',
-                'desc': 'Doing this task',
-            },
-            {
-                'id_key': 3,
-                'status': 'done',
-                'start': '29-DEC-2022',
-                'end': '30-DEC-2022',
-                'desc': 'Finished task',
-            }]
+        {
+            'id_key': 1,
+            'status': 'pending',
+            'start': '28-DEC-2022',
+            'end': '     -     ',
+            'desc': 'MyNewTask',
+        },
+        {
+            'id_key': 2,
+            'status': 'inprog',
+            'start': '29-DEC-2022',
+            'end': '     -     ',
+            'desc': 'Doing this task',
+        },
+        {
+            'id_key': 3,
+            'status': 'done',
+            'start': '29-DEC-2022',
+            'end': '30-DEC-2022',
+            'desc': 'Finished task',
         }]
-    }
+    }]}
 
     output = Archive().transform(json_obj['all'][0])
 

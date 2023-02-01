@@ -20,5 +20,5 @@ jobs:
         pip install flake8
     - name: Linting with flake8
       run: |
-        flake8 src/
+        python3 -m flake8 --ignore=E402,W504
       continue-on-error: true

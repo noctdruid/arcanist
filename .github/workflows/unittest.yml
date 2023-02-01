@@ -17,5 +17,5 @@ jobs:
     - name: Performing Unit Tests
       run: |
         cd tests/
-        python3 -c 'import os; import sys; sys.path.append(os.path.abspath('../src/')); from arc.resolve import InitCheckout; InitCheckout().dir_check()'
+        python3 -c 'import os; import sys; sys.path.append(os.path.abspath("../src/")); from arc.resolve import InitCheckout; InitCheckout().dir_check()'
         python3 -m unittest discover -v
