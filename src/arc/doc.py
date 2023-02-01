@@ -1,3 +1,6 @@
+"""Notifications and manuals output."""
+
+
 class Man:
     """Multi-line help/guide command outputs."""
     HELP = """
@@ -60,11 +63,11 @@ class Notifications:
 
     # Notification delivery
     def notify(self, *args) -> str:
+        """Notification about operation execution."""
         notification = self.dictkw[args[0]]
-        arg_inputs = tuple([x for x in args[1:]])
-        return (notification % arg_inputs)
+        return notification % tuple(args[1:])
 
 
 # Archive window menu
-menu = '[Q] Quit | [KEY_UP][KEY_DOWN][PGUP][PGDN][HOME][END] \
+MENU = '[Q] Quit | [KEY_UP][KEY_DOWN][PGUP][PGDN][HOME][END] \
 Navigation | [%d/%d] Page'

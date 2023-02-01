@@ -1,3 +1,5 @@
+"""Command-line interface and cli-restrictions."""
+
 import argparse
 import os
 import sys
@@ -7,9 +9,10 @@ from arc.resolve import InitCheckout
 
 
 class Interface:
+    """Building argparse library interface."""
 
-    def _init_args(self):
-        """Method for building argparse library interface.
+    def __init__(self):
+        """Add cli arguments.
         :func parser: argparse configurator,
         :func parser.add_argument: configuring cli argument option
         and expected specification of inputs."""
@@ -81,19 +84,15 @@ class Interface:
             '--usage', action='store_true', dest='usage'
         )
 
-        # Namespace that holds objects
-        args = self.parser.parse_args()
-        return args
-
     def _cli_policy(self):
         """Method to adjust user-behaviour inputs."""
         if sys.argv[0] == sys.argv[-1]:
             # bool - representation of is there user-input args?
             return False
 
-        MAX_ARGS = 1
-        MIXED_TYPE = ['task', 'group', 'edit', 'archive', 'append']
-        args = vars(self._init_args())
+        max_args = 1
+        mixed_type = ['task', 'group', 'edit', 'archive', 'append']
+        args = vars(self.parser.parse_args())
 
         # loop to check if there is more than one opt
         try:
@@ -101,7 +100,7 @@ class Interface:
             for key, value in args.items():
                 if value:
                     input_args += 1
-                    if input_args > MAX_ARGS:
+                    if input_args > max_args:
                         raise SyntaxError('more than one arg forbidden')
 
         except SyntaxError:
@@ -115,12 +114,12 @@ class Interface:
                 break
 
         # for multi-type cases convert numbers from str to int type
-        if pair[0] in MIXED_TYPE:
+        if pair[0] in mixed_type:
             try:
-                if (pair[0] == MIXED_TYPE[0] or pair[0] == MIXED_TYPE[1] or
-                        pair[0] == MIXED_TYPE[3] or pair[0] == MIXED_TYPE[4]):
+                if (pair[0] == mixed_type[0] or pair[0] == mixed_type[1] or
+                        pair[0] == mixed_type[3] or pair[0] == mixed_type[4]):
                     pair[1][0] = int(pair[1][0])
-                elif pair[0] == MIXED_TYPE[2]:
+                elif pair[0] == mixed_type[2]:
                     pair[1][0] = int(pair[1][0])
                     pair[1][1] = int(pair[1][1])
 
