@@ -20,5 +20,5 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint --extension-pkg-allow-list=curses
+        pylint --ignore-on-opaque-inference=y
         pylint $(git ls-files 'src/*.py')
