@@ -21,9 +21,9 @@ class InitCheckout:
         """Check sizes and ansi support."""
         if (TerminalFormatting().shell_allowed() and self._term_checkout()):
             return '__ansi__'
-
-        elif not TerminalFormatting().shell_allowed():
+        if not TerminalFormatting().shell_allowed():
             sys.exit('error: terminal width or lines less than 80x20')
+        return None
 
     def _term_checkout(self) -> bool:
         """List of tested-terminals that support ansi escape seq."""

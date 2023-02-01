@@ -54,6 +54,7 @@ class JsonInteraction:
             json_dict = json.load(opened_file)
             opened_file.close()
             return json_dict
+        return None
 
     def json_dump(self, json_dict, json_file=json_path):
         """Encode dict to json."""
@@ -131,8 +132,8 @@ class JsonInteraction:
 
         # User-entry validation
         archive_names = []
-        for a in archive_entries['all']:
-            archive_names.append(a['name'])
+        for archive in archive_entries['all']:
+            archive_names.append(archive['name'])
 
         if archive_name not in archive_names:
             pass
@@ -141,8 +142,8 @@ class JsonInteraction:
 
         # Archiving group
         group_info = json_entries['all'][group_id_key]
-        out = Archive().transform(group_info, archive_name)
-        archive_entries['all'].append(out)
+        tasks_out = Archive().transform(group_info, archive_name)
+        archive_entries['all'].append(tasks_out)
         self.json_dump(archive_entries, json_file=self.archive_path)
 
         # Cleaning
@@ -160,13 +161,12 @@ class JsonInteraction:
         # User-entry validation and array archive matching
         archive_names = []
         archive_id = 0
-        for a in archive_entries['all']:
-            if a['name'] == archive_name:
-                archive_names.append(a['name'])
+        for archive in archive_entries['all']:
+            if archive['name'] == archive_name:
+                archive_names.append(archive['name'])
                 break
-            else:
-                archive_names.append(a['name'])
-                archive_id += 1
+            archive_names.append(archive['name'])
+            archive_id += 1
 
         if archive_name in archive_names:
             pass
@@ -175,11 +175,11 @@ class JsonInteraction:
 
         # Archiving additional tasks
         group_info = json_entries['all'][group_id_key]
-        out = Archive().transform(group_info)
+        tasks_out = Archive().transform(group_info)
         tasks = archive_entries['all'][archive_id]['tasks']
-        for t in out['tasks']:
+        for task in tasks_out['tasks']:
             # Adding task by task in archive
-            tasks.append(t)
+            tasks.append(task)
         self.json_dump(archive_entries, json_file=self.archive_path)
 
         # Cleaning

@@ -7,7 +7,6 @@ from arc.doc import MENU as menu
 
 class Archive:
     """Very simple presentation of archived tasks."""
-
     def __init__(self):
         self.done = '✔'
         self.not_done = '☐'
@@ -77,14 +76,11 @@ class ArchiveUI:
     cut_lines = 0
 
     def __init__(self, archive):
-        # Start curses, get terminal properties, get archive ml-string
+        # Start curses and set instance attributes
         self.init_curses()
         self.max_lines = curses.LINES
         self.max_cols = curses.COLS
         self.archive = archive
-
-        # Spliting excessed lines, calculating max number of pages,
-        # setting mirror variable for archive
         self.split_excessed()
         self.max_page = self.paging()
         self.parse_archive = self.archive
@@ -216,7 +212,7 @@ class ArchiveUI:
 
         if quotient <= 1:
             return 1
-        elif float(quotient) == int(quotient):
+        if float(quotient) == int(quotient):
             return int(quotient)
         return int(quotient) + 1
 
@@ -296,7 +292,7 @@ class ArchiveUI:
         pads = (self.max_cols - len(menu)) // 2
         view = self.gen_view()
 
-        header_pads = ((self.max_cols - 15) // 2 * ' ')
+        header_pads = (self.max_cols - 15) // 2 * ' '
         header = f'{header_pads}»»» archive «««{header_pads}'
         if len(header) != self.max_cols:
             header = f'{header} '

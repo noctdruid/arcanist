@@ -1,4 +1,4 @@
-name: Pylint
+name: Unit Tests
 
 on: [push]
 
@@ -14,10 +14,7 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+    - name: Performing Unit Tests
       run: |
-        python -m pip install --upgrade pip
-        pip install pylint
-    - name: Analysing the code with pylint
-      run: |
-        pylint -d E1101,W0123,W1201,R1732,R0902,R0903,C0209 $(git ls-files 'src/*.py')
+        cd tests/
+        python3 -m unittest discover -v

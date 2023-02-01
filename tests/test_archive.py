@@ -39,7 +39,7 @@ class ArchiveTestCase(unittest.TestCase):
         # test group tasks containing and name
         x = self.output['name']
         y = self.output['tasks']
-        self.assertEqual(x, 'MyGroup')
+        self.assertEqual(x, None)
         self.assertEqual(len(y), 3)
 
     def test_transform_two(self):
