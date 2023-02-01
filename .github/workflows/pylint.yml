@@ -20,5 +20,5 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint --unsafe-load-any-extension=y
+        pylint --extension-pkg-whitelist=_curses
         pylint $(git ls-files 'src/*.py')
