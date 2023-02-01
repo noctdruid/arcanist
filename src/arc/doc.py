@@ -1,3 +1,6 @@
+"""Notifications and manuals output."""
+
+
 class Man:
     """Multi-line help/guide command outputs."""
     HELP = """
@@ -9,12 +12,13 @@ class Man:
     -g, --group         change name of the group
     -e, --edit          edit task description
     -r, --remove        remove task
-    -a, --archive       archive whole group date-based
+    -a, --archive       create archive and archive whole group
     -p, --purge         purge whole group and tasks
-    -s, --start         change state of task(s) to 'in progress'
+    -s, --start         change state of task(s) to 'in-progress'
     -f, --finish        change state of task(s) to 'done'
 
     --board             show tasks board (default)
+    --append            add group to existing archive
     --expand            expand task description
     --show              show archived tasks
     --reset             restart program to no task entries
@@ -35,6 +39,7 @@ class Man:
     arc-tasks -s <group_id> <task_id> <task_id> ...
     arc-tasks -f <group_id> <task_id> <task_id> ...
     arc-tasks --board
+    arc-tasks --append <group_id> <archive_name>
     arc-tasks --expand <group_id> <task_id>
     arc-tasks --show
     arc-tasks --reset
@@ -45,24 +50,24 @@ class Man:
 
 class Notifications:
     """Post command-execution notifications."""
-    # var for defining notification messaging
     dictkw = {
-        'create': 'new group: %s\nnew task: %s',  # 2
-        'task': 'task: %s\nassigned to the group: %s',  # 2
-        'group': 'changed name of the group:\n%s __-->__ %s',  # 2
-        'edit': 'changed task from the group: %s\n%s __-->__ %s',  # 3
-        'remove': 'removed task: %s\nfrom the group: %s',  # 2
-        'archive': 'whole group archived: %s',  # 1
-        'purge': 'whole group deleted: %s',  # 1
+        'create': 'new group: %s\nnew task: %s',
+        'task': 'task: %s\nassigned to the group: %s',
+        'group': 'changed name of the group:\n%s __-->__ %s',
+        'edit': 'changed task from the group: %s\n%s __-->__ %s',
+        'remove': 'removed task: %s\nfrom the group: %s',
+        'archive': 'new archive: %s',
+        'purge': 'whole group deleted: %s',
+        'append': 'archive: %s __<--__ group append',
     }
 
-    # method for notification delivery
+    # Notification delivery
     def notify(self, *args) -> str:
+        """Notification about operation execution."""
         notification = self.dictkw[args[0]]
-        arg_inputs = tuple([x for x in args[1:]])
-        return (notification % arg_inputs)
+        return notification % tuple(args[1:])
 
 
-# archive window menu
-menu = '[Q] Quit | [KEY_UP][KEY_DOWN][PGUP][PGDN][HOME][END] \
+# Archive window menu
+MENU = '[Q] Quit | [KEY_UP][KEY_DOWN][PGUP][PGDN][HOME][END] \
 Navigation | [%d/%d] Page'

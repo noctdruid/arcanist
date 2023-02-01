@@ -1,32 +1,27 @@
-from arc.resolve import now
-from arc.doc import menu
+"""Building textual user-interface for tasks custom archives."""
+
 import curses
+from arc.resolve import now
+from arc.doc import MENU as menu
 
 
 class Archive:
+    """Very simple presentation of archived tasks."""
 
     def __init__(self):
-        """Very simple presentation of archived tasks.
-        [DD-MMM-YYYY] 'symbol' 'group name'
-        'symbol' 'task 1 desc...'
-        'symbol' 'task 2 desc...'
-        'symbol' 'task N desc...'"""
         self.done = '✔'
         self.not_done = '☐'
 
-    def transform(self, group) -> dict:
-        """Method for preparing group and tasks for json store.
+    def transform(self, group, archive_name=None) -> dict:
+        """Preparing group and tasks for json store.
         :param group: dict containing group and tasks,
         :return: formatted dict containing group and tasks."""
-        name = group['name']
+        name = archive_name
         group_dict = {'date': now, 'name': name, 'tasks': []}
 
         # get task variables
         for task in group['tasks']:
-            if task['status'] == 'done':
-                task_status = True
-            else:
-                task_status = False
+            task_status = bool(task['status'] == 'done')
             task_name = task['desc']
             task_dict = {'completion': task_status, 'name': task_name}
 
@@ -75,24 +70,24 @@ class Archive:
 
 
 class ArchiveUI:
+    """ArchiveUI is class for building curses screen,
+    displaying archive.json and adding navigation functionality.
+    :param archive: mod archive.json file input."""
+    curr_page = 1
+    cut_lines = 0
 
     def __init__(self, archive):
-        """ArchiveUI is class for building curses screen,
-        displaying archive.json and adding navigation functionality.
-        :param archive: mod archive.json file input"""
-        # Initi curses and get lines/column values
+        # Start curses, get terminal properties, get archive ml-string
         self.init_curses()
         self.max_lines = curses.LINES
         self.max_cols = curses.COLS
         self.archive = archive
 
         # Spliting excessed lines, calculating max number of pages,
-        # setting initial page and assigning coordinator var for navigation
+        # setting mirror variable for archive
         self.split_excessed()
         self.max_page = self.paging()
         self.parse_archive = self.archive
-        self.curr_page = 1
-        self.cut_lines = 0
 
     def init_curses(self):
         """Initialize curses behaviour."""
@@ -123,50 +118,42 @@ class ArchiveUI:
 
     def input_stream(self):
         """Program control using while loop and user actions."""
-        DOWN = 1
-        UP = -1
+        move_down = 1
+        move_up = -1
 
         # Running until user interrupts
         while True:
             self.display()
-            ch = self.window.getch()
-            if ch == curses.KEY_DOWN:
+            key_ch = self.window.getch()
+            if key_ch == curses.KEY_DOWN:
                 # One line down
-                self.line_nav(DOWN)
+                self.line_nav(move_down)
 
-            elif ch == curses.KEY_UP:
+            elif key_ch == curses.KEY_UP:
                 # One line up
-                self.line_nav(UP)
+                self.line_nav(move_up)
 
-            elif ch == curses.KEY_NPAGE:
+            elif key_ch == curses.KEY_NPAGE:
                 # Next page (PgDn)
-                if self.max_page == 1:
-                    pass
-                else:
-                    self.page_nav(DOWN)
+                if self.max_page != 1:
+                    self.page_nav(move_down)
 
-            elif ch == curses.KEY_PPAGE:
+            elif key_ch == curses.KEY_PPAGE:
                 # Previous page (PgUp)
-                if self.max_page == 1:
-                    pass
-                else:
-                    self.page_nav(UP)
+                if self.max_page != 1:
+                    self.page_nav(move_up)
 
-            elif ch == curses.KEY_HOME:
+            elif key_ch == curses.KEY_HOME:
                 # First page
-                if self.curr_page == 1:
-                    pass
-                else:
+                if self.curr_page != 1:
                     self.home_nav()
 
-            elif ch == curses.KEY_END:
+            elif key_ch == curses.KEY_END:
                 # Last page
-                if self.curr_page == self.max_page:
-                    pass
-                else:
+                if self.curr_page != self.max_page:
                     self.end_nav()
 
-            elif (ch == ord('q') or ch == ord('Q')):
+            elif (key_ch == ord('q') or key_ch == ord('Q')):
                 # Quit program
                 break
 
@@ -187,7 +174,6 @@ class ArchiveUI:
         # Block line exceeding or move
         if self.cut_lines == -1:
             self.cut_lines = 0
-            return
         elif self.cut_lines > self.archive_lines():
             self.cut_lines -= 1
         else:
@@ -232,8 +218,7 @@ class ArchiveUI:
             return 1
         elif float(quotient) == int(quotient):
             return int(quotient)
-        else:
-            return int(quotient) + 1
+        return int(quotient) + 1
 
     def home_nav(self):
         """Sets lines to initial state."""
