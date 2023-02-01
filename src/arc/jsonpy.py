@@ -1,3 +1,5 @@
+"""Interaction with json files."""
+
 import os
 import sys
 import json
@@ -15,18 +17,16 @@ class JsonInteraction:
     def _json_decode_resolve(self, path) -> bool:
         """Internal function for resolving json problems."""
         try:
-            opened_file = open(path, 'r')
+            opened_file = open(path, 'r', encoding='utf-8')
             json_dict = json.load(opened_file)
             if isinstance(json_dict['all'], list):
                 opened_file.close()
-                return True
             else:
                 raise KeyError("main object is not 'all'")
 
         except KeyError:
             DebugLog().log_exception()
             self.json_dump(self.json_object)
-            return True
 
         except PermissionError:
             DebugLog().log_exception()
@@ -35,21 +35,22 @@ class JsonInteraction:
         except FileNotFoundError:
             DebugLog().log_exception()
             json_object = json.dumps(self.json_object, indent=4)
-            with open(path, 'w') as newfile:
+            with open(path, 'w', encoding='utf-8') as newfile:
                 newfile.write(json_object)
                 newfile.close()
-            return True
 
         except json.decoder.JSONDecodeError:
             DebugLog().log_exception()
             self.json_dump(self.json_object, json_file=path)
-            return True
+
+        # No error triggered or errors resolved
+        return True
 
     def json_load(self, json_file=json_path):
         """Decode json to dict."""
         is_true = self._json_decode_resolve(json_file)
         if is_true:
-            opened_file = open(json_file, 'r')
+            opened_file = open(json_file, 'r', encoding='utf-8')
             json_dict = json.load(opened_file)
             opened_file.close()
             return json_dict
@@ -58,7 +59,7 @@ class JsonInteraction:
         """Encode dict to json."""
         is_true = self._json_decode_resolve(json_file)
         if is_true:
-            opened_file = open(json_file, 'w')
+            opened_file = open(json_file, 'w', encoding='utf-8')
             json.dump(json_dict, opened_file, indent=4)
             opened_file.close()
 
@@ -83,21 +84,17 @@ class JsonInteraction:
         check_group_entries = json_entries['all']
 
         if check_group_entries != []:
-            # User added entry/entries
             return True
-        else:
-            # No user entry
-            return False
+        return False
 
     def index_assign(self, json_list):
         """Assigning id_keys to groups/tasks, first condition
         is only applicable to the first group+task created."""
         if not self.user_entries():
             return 1
-        else:
-            highest_id_key = json_list[-1]['id_key']
-            new_highest_id_key = highest_id_key + 1
-            return new_highest_id_key
+        highest_id_key = json_list[-1]['id_key']
+        new_highest_id_key = highest_id_key + 1
+        return new_highest_id_key
 
     def enum_index(self, json_list):
         """Enumerating json indexes."""

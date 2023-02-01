@@ -1,3 +1,5 @@
+"""Resolving common problems and providing resources."""
+
 import os
 import sys
 import json
@@ -15,14 +17,12 @@ now = datetime.now().strftime("%d-%b-%Y").upper()
 class InitCheckout:
     """Get $TERM and return ansi format support.
     Check if directory exist and have right permissions."""
-    def term_initialize(self) -> str:
+    def term_initialize(self):
+        """Check sizes and ansi support."""
         if (TerminalFormatting().shell_allowed() and self._term_checkout()):
             return '__ansi__'
 
-        elif TerminalFormatting().shell_allowed():
-            return
-
-        else:
+        elif not TerminalFormatting().shell_allowed():
             sys.exit('error: terminal width or lines less than 80x20')
 
     def _term_checkout(self) -> bool:
@@ -33,10 +33,8 @@ class InitCheckout:
         ]  # if you have different terminal that supports ansi escape seq
         # ... you can add it here in supp_term list
 
-        if your_term in supp_term:
-            return True
-        else:
-            return False
+        # Return True if your terminal matches supported list
+        return bool(your_term in supp_term)
 
     def dir_check(self, path=DIR_PATH) -> bool:
         """Checking directory."""
@@ -46,8 +44,7 @@ class InitCheckout:
             dir_perm = (os.access(path, os.R_OK) + os.access(path, os.W_OK))
             if dir_perm:
                 return True
-            else:
-                sys.exit(f'check if directory has right permissions:\n{path}')
+            sys.exit(f'check if directory has right permissions:\n{path}')
 
         elif not dir_exist:
             # Create directory
@@ -56,51 +53,47 @@ class InitCheckout:
             arc_store = os.path.join(DIR_PATH, 'arc.json')
             archive_store = os.path.join(DIR_PATH, 'archive.json')
 
-            with open(arc_store, 'w') as newfile:
+            with open(arc_store, 'w', encoding='utf-8') as newfile:
                 newfile.write(json_object)
                 newfile.close()
 
-            with open(archive_store, 'w') as newfile:
+            with open(archive_store, 'w', encoding='utf-8') as newfile:
                 newfile.write(json_object)
                 newfile.close()
 
             return True
 
-        else:
-            # Possible system corruptions
-            return False
+        # Unknown directory corruption
+        return False
 
 
 class TerminalFormatting:
-
+    """Class for terminal properties, formatting projections.
+    :attr term_pads: four left and four right chars space,
+    :attr shell_width: for comfortable usage-experience,
+    :attr shell_lines: for comfortable usage-experience."""
     SYMBOL = ('☐', '…', '➤', '✔', '🞂', '#', '█')
-    MIN_GEN_CHARS = 36  # minimal number of generic characters
+    generic_chars = 36  # Minimal number of generic characters
     user_shell_width = shutil.get_terminal_size().columns
     user_shell_lines = shutil.get_terminal_size().lines
 
     def __init__(self):
-        """Class for terminal properties, formatting projections.
-        :attr SHELL_PADS: four left and four right chars space,
-        :attr MIN_SHELL_ALLOWED: for comfortable usage-experience."""
-        self.SHELL_PADS = 8
-        self.MIN_SHELL_ALLOWED = 80
-        self.MIN_SHELL_LINES = 20
+        self.term_pads = 8
+        self.shell_width = 80
+        self.shell_lines = 20
 
     def shell_allowed(self) -> bool:
         """Check if term-width >= 80 and term-lines >= 20."""
-        if (
-            (self.MIN_SHELL_ALLOWED <= self.user_shell_width) and
-            (self.MIN_SHELL_LINES <= self.user_shell_lines)
-        ):
-            return True
+        check_width = self.shell_width <= self.user_shell_width
+        check_lines = self.shell_lines <= self.user_shell_lines
+        return bool(check_width and check_lines)
 
     def add_space(self, digit) -> str:
         """Add space in front of single digit id_key.
         :return: str type formatted digit (id_key): ' 1' or '11'."""
         if digit < 10:
             return ' ' + str(digit)
-        else:
-            return str(digit)
+        return str(digit)
 
     def measure_task_desc(self, input_string) -> int:
         """Measure maximum task description length before it
@@ -110,6 +103,6 @@ class TerminalFormatting:
             - user-input task description length"""
         string_length = len(input_string)
         max_desc_length = (
-            self.user_shell_width - self.MIN_GEN_CHARS - self.SHELL_PADS - 1
+            self.user_shell_width - self.generic_chars - self.term_pads - 1
         )
         return max_desc_length - string_length

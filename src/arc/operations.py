@@ -1,3 +1,5 @@
+"""Data modeling module."""
+
 from arc.resolve import now
 from arc.jsonpy import JsonInteraction
 from arc.log import InfoLog
@@ -14,16 +16,16 @@ class Group:
         self.name = name
         self.tasks = []
 
-    def make_group(self):
+    def make_group(self) -> dict:
+        """Return class attrs as dict."""
         return self.__dict__
 
 
 class Task:
-
+    """Clas for task value changes.
+    :param kwargs: different task construction attributes,
+    :attr end_: hypothetical end-date placeholder."""
     def __init__(self, **kwargs):
-        """Clas for task value changes.
-        :param kwargs: different task construction attributes,
-        :attr end: hypothetical end-date placeholder. """
         self.kwargs = kwargs
         self.end_ = '     -     '
 
@@ -40,7 +42,7 @@ class Task:
         }
         return task
 
-    # task-changes
+    # Task-changes
     def start_task(self):
         """Changing task status to in-progress."""
         task = {'status': 'inprog', 'end': self.end_}
@@ -58,17 +60,15 @@ class Task:
 
 
 class Operations:
-
+    """Class for doing user-induced operations and logging changes."""
     def __init__(self):
-        """Class for doing user-induced operations and logging changes."""
         self.single = self.SingleOperations
         self.multi = self.MultiOperations
         self.special = self.SpecialOperations
 
     class SingleOperations:
-
+        """Class for single-input/positional operation."""
         def __init__(self, **kwargs):
-            """Class for single-input/positional operation."""
             self.kwargs = kwargs
             self.json_obj = JsonInteraction().json_load()
 
@@ -214,10 +214,8 @@ class Operations:
             print(Notifications().notify('purge', group_name))
 
     class MultiOperations:
-
+        """Class for start/finish options, it supports multi-args input."""
         def __init__(self):
-            """This class is for start/finish options,
-            it supports multi-args input."""
             self.json_obj = JsonInteraction().json_load()
 
         def start(self, *args):
@@ -235,7 +233,7 @@ class Operations:
                         "'IN-PROGRESS __-->__ PENDING'"
                     )
                     new_attr = Task().reverse_task()
-                    for key, value in group[arg - 1].items():
+                    for key in group[arg - 1]:
                         try:
                             if group[arg - 1][key] != new_attr[key]:
                                 group[arg - 1][key] = new_attr[key]
@@ -252,7 +250,7 @@ class Operations:
                         f"'{old_status} __-->__ IN-PROGRESS'"
                     )
                     new_attr = Task().start_task()
-                    for key, value in group[arg - 1].items():
+                    for key in group[arg - 1]:
                         try:
                             if group[arg - 1][key] != new_attr[key]:
                                 group[arg - 1][key] = new_attr[key]
@@ -276,7 +274,7 @@ class Operations:
                         "'DONE __-->__ PENDING'"
                     )
                     new_attr = Task().reverse_task()
-                    for key, value in group[arg - 1].items():
+                    for key in group[arg - 1]:
                         try:
                             if group[arg - 1][key] != new_attr[key]:
                                 group[arg - 1][key] = new_attr[key]
@@ -293,7 +291,7 @@ class Operations:
                         f"'{old_status} __-->__ DONE'"
                     )
                     new_attr = Task().finish_task()
-                    for key, value in group[arg - 1].items():
+                    for key in group[arg - 1]:
                         try:
                             if group[arg - 1][key] != new_attr[key]:
                                 group[arg - 1][key] = new_attr[key]
@@ -303,9 +301,8 @@ class Operations:
             JsonInteraction().json_dump(self.json_obj)
 
     class SpecialOperations:
-
+        """Class intended only for output operations."""
         def __init__(self):
-            """Class intended only for output operations."""
             self.json_obj = JsonInteraction().json_load()
 
         def board(self):

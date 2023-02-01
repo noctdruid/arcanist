@@ -41,13 +41,8 @@ class Board:
             # For ansi support terminal replace ansi dict values
             _value_changes()
 
-        self.sq = TerminalFormatting.SYMBOL[6]
         self.user_shell = TerminalFormatting.user_shell_width
-        self.generic = TerminalFormatting.MIN_GEN_CHARS
-        self.pending = TerminalFormatting.SYMBOL[0]
-        self.inprog = TerminalFormatting.SYMBOL[1]
-        self.arrow = TerminalFormatting.SYMBOL[2]
-        self.done = TerminalFormatting.SYMBOL[3]
+        self.generic = TerminalFormatting.generic_chars
 
     def group_formatting(self, id_key, name, done, total):
         """Group id_key, group name, minimal statistic [DONE/TOTAL]."""
