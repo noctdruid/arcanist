@@ -1,7 +1,7 @@
 """Building textual user-interface for tasks custom archives."""
 
 import curses
-from arc.resolve import now, TerminalFormatting
+from arc.resolve import now
 from arc.doc import MENU as menu
 
 
