@@ -1,7 +1,7 @@
 """Building textual user-interface for tasks custom archives."""
 
 import curses
-from arc.resolve import now
+from arc.resolve import now, TerminalFormatting
 from arc.doc import MENU as menu
 
 
@@ -104,6 +104,8 @@ class ArchiveUI:
         try:
             self.input_stream()  # user-inputs
         except KeyboardInterrupt:
+            pass
+        except curses.error:
             pass
         finally:
             curses.curs_set(1)  # Set back cursor
