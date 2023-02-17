@@ -2,7 +2,7 @@ import os
 import sys
 sys.path.append(os.path.abspath('../src/'))
 
-from arc.operations import Operations
+from arctasks.operations import Operations
 
 
 if __name__ == '__main__':

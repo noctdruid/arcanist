@@ -3,8 +3,8 @@ import sys
 import unittest
 sys.path.append(os.path.abspath('../src/'))
 
-from arc.jsonpy import JsonInteraction
-from arc.resolve import TerminalFormatting
+from arctasks.jsonpy import JsonInteraction
+from arctasks.resolve import TerminalFormatting
 
 
 class JsonTestCase(unittest.TestCase):

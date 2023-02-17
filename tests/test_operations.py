@@ -3,8 +3,8 @@ import sys
 import unittest
 sys.path.append(os.path.abspath('../src/'))
 
-from arc.jsonpy import JsonInteraction
-from arc.operations import Operations
+from arctasks.jsonpy import JsonInteraction
+from arctasks.operations import Operations
 
 output_null = open('/dev/null', 'w')
 sys.stdout = output_null

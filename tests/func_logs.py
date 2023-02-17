@@ -2,7 +2,7 @@ import os
 import sys
 sys.path.append(os.path.abspath('../src/'))
 
-from arc.log import DebugLog, InfoLog
+from arctasks.log import DebugLog, InfoLog
 
 
 class LogTest:
