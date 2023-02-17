@@ -19,7 +19,9 @@ archiving multi-group tasks and navigating through archive with UI.
 # PyPi package:
 pip install arc-tasks
 
-# Optionally add alias in .bashrc or .zshrc  # your shell configuration file
+# add PATH in .bashrc or .zshrc  # your shell configuration file
+# and optionally add short alias arc
+export PATH="$PATH:$HOME/.local/bin/"
 alias arc="arc-tasks"
 ```
 
