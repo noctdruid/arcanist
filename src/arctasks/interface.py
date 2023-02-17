@@ -3,9 +3,9 @@
 import argparse
 import os
 import sys
-from arc.log import DebugLog
-from arc.operations import Operations
-from arc.resolve import InitCheckout
+from arctasks.log import DebugLog
+from arctasks.operations import Operations
+from arctasks.resolve import InitCheckout
 
 
 class Interface:

@@ -29,12 +29,12 @@ class Man:
     USAGE = """
     program usage examples:
 
-    arc-tasks -c 'name_of_the_group' 'desc_of_a_task'
-    arc-tasks -t <group_id> 'desc_of_a_task'
-    arc-tasks -g <group_id> 'new_name_of_the_group'
-    arc-tasks -e <group_id> <task_id> 'new_desc_of_a_task'
+    arc-tasks -c <group_name> <task_desc>
+    arc-tasks -t <group_id> <task_desc>
+    arc-tasks -g <group_id> <new_group_name>
+    arc-tasks -e <group_id> <task_id> <new_task_desc>
     arc-tasks -r <group_id> <task_id>
-    arc-tasks -a <group_id>
+    arc-tasks -a <group_id> <archive_name>
     arc-tasks -p <group_id>
     arc-tasks -s <group_id> <task_id> <task_id> ...
     arc-tasks -f <group_id> <task_id> <task_id> ...

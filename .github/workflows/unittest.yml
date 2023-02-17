@@ -3,12 +3,14 @@ name: Unit Tests
 on:
   push:
     branches:
+    - master
     - development
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
     steps:
@@ -20,5 +22,5 @@ jobs:
     - name: Performing Unit Tests
       run: |
         cd tests/
-        python3 -c 'import os; import sys; sys.path.append(os.path.abspath("../src/")); from arc.resolve import InitCheckout; InitCheckout().dir_check()'
-        python3 -m unittest discover -v
+        python3 -c 'import os; import sys; sys.path.append(os.path.abspath("../src/")); from arctasks.resolve import InitCheckout; InitCheckout().dir_check()'
+        python3 -m unittest -v ./test_*.py

@@ -3,9 +3,9 @@
 import os
 import sys
 import json
-from arc.resolve import DIR_PATH as dir_path
-from arc.log import DebugLog
-from arc.archive import Archive, ArchiveUI
+from arctasks.resolve import DIR_PATH as dir_path
+from arctasks.log import DebugLog
+from arctasks.archive import Archive, ArchiveUI
 
 
 class JsonInteraction:

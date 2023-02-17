@@ -1,10 +1,10 @@
-"""Data modeling module."""
+"""Data modeling."""
 
-from arc.resolve import now
-from arc.jsonpy import JsonInteraction
-from arc.log import InfoLog
-from arc.board import Board
-from arc.doc import Man, Notifications
+from arctasks.resolve import now
+from arctasks.jsonpy import JsonInteraction
+from arctasks.log import InfoLog
+from arctasks.board import Board
+from arctasks.doc import Man, Notifications
 
 
 class Group:

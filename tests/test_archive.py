@@ -1,9 +1,9 @@
 import os
 import sys
 import unittest
-sys.path.append(os.path.abspath('../src/'))
+sys.path.append(os.path.abspath('../src/arc/'))
 
-from arc.archive import Archive
+from arctasks.archive import Archive
 
 
 class ArchiveTestCase(unittest.TestCase):

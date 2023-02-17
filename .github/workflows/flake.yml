@@ -3,12 +3,14 @@ name: Flake8
 on:
   push:
     branches:
+    - master
     - development
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      continue-on-error: true
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
     steps:
@@ -24,4 +26,3 @@ jobs:
     - name: Linting with flake8
       run: |
         python3 -m flake8 --ignore=E402,W504
-      continue-on-error: true

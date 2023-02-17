@@ -2,7 +2,7 @@
 
 import os
 import logging
-from arc.resolve import DIR_PATH, TerminalFormatting
+from arctasks.resolve import DIR_PATH, TerminalFormatting
 
 f_symb = TerminalFormatting.SYMBOL
 

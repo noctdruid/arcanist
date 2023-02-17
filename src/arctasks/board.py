@@ -1,6 +1,6 @@
 """Formatting lines and grouping for terminal view."""
 
-from arc.resolve import InitCheckout, TerminalFormatting
+from arctasks.resolve import InitCheckout, TerminalFormatting
 
 
 class Board:
