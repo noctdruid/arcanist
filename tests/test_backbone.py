@@ -1,7 +1,7 @@
 import os
 import sys
 import unittest
-sys.path.append(os.path.abspath('../src/arc/'))
+sys.path.append(os.path.abspath('../src/'))
 
 from arctasks.jsonpy import JsonInteraction
 from arctasks.resolve import TerminalFormatting

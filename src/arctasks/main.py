@@ -10,4 +10,5 @@ from arctasks.interface import Interface
 
 
 def init():
+    """Run program."""
     Interface().initialize_args()
