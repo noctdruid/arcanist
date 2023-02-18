@@ -4,7 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "arc-tasks"
+<<<<<<< HEAD
 version = "0.1.0"
+=======
+version = "0.1.2"
+>>>>>>> 3187dc5 (quick fix: removing task)
 authors = [
   { name="Predrag Bunic", email="noctdruid@proton.me" },
 ]
@@ -25,4 +29,8 @@ classifiers = [
 Source = "https://github.com/noctdruid/arc-tasks"
 
 [project.scripts]
+<<<<<<< HEAD
 arc-tasks = "arctasks.main:init"
+=======
+arc-tasks = "arctasks.main:init"
+>>>>>>> 3187dc5 (quick fix: removing task)
