@@ -154,10 +154,7 @@ class Operations:
             group_id_key = self.kwargs['group_id_key'] - 1
             task_id_key = self.kwargs['task_id_key'] - 1
             json_obj = self.json_obj['all'][group_id_key]['tasks']
-<<<<<<< HEAD
-=======
             group_name = self.json_obj['all'][group_id_key]['name']
->>>>>>> 3187dc5 (quick fix: removing task)
             task_name = json_obj[task_id_key]['desc']
             del json_obj[task_id_key]
 
@@ -169,10 +166,6 @@ class Operations:
             JsonInteraction().json_dump(self.json_obj)
 
             # InfoLog
-<<<<<<< HEAD
-            group_name = self.json_obj['all'][group_id_key]['name']
-=======
->>>>>>> 3187dc5 (quick fix: removing task)
             InfoLog().log_entry(
                 ('remove task', group_name, task_name)
             )
