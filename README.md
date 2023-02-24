@@ -1,6 +1,8 @@
-# arc-tasks
+# arcanist (ex. arc-tasks)
 
 ## about
+~ Work in progress, v0.1.2 version is available on separate branch<br>
+
 'arc-tasks' is minimalistic program designed for command-line-interface,
 working with asci escape sequences supported terminals, handy with drop-down
 terminals, nicely formatted task-objectives right in terminal with
@@ -11,8 +13,8 @@ archiving multi-group tasks and navigating through archive with UI.
 ## requirements
 
 - python 3.8+
-- pip 22.2+
-- xterm-256color (terminal emulator or other that supports ansi)  # need to be added string in src/arc/resolve.py
+- xterm-256color (terminal emulator)
+- pip (pypi package manager)
 
 ## installation
 ```
@@ -28,7 +30,6 @@ alias arc="arc-tasks"
 ## usage/guide
 ```
     usage: arc-tasks [OPT]
-    for usage examples type: arc-tasks --usage
 
     -c, --create        create group & task
     -t, --task          add task to the group
